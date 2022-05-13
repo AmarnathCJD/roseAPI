@@ -243,11 +243,12 @@ func Lyrics(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "lyrics not found", http.StatusNotFound)
 		return
 	}
-	resp, err = c.Get(lyricURL)
+	resp_2, err := c.Get(lyricURL)
 	if !ERR(err, w) {
 		return
 	}
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+        log.Println(lyricURL)
+	doc, err := goquery.NewDocumentFromReader(resp_2.Body)
 	var t string
         h, _ := doc.Html()
         w.Write([]byte(h))

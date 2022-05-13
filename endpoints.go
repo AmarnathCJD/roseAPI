@@ -157,9 +157,33 @@ func ImDB(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func ChatBot(w http.ResponseWriter, r *http.Request) {
+ var API = "https://icap.iconiq.ai/talk?&botkey=icH-VVd4uNBhjUid30-xM9QhnvAaVS3wVKA3L8w2mmspQ-hoUB3ZK153sEG3MX-Z8bKchASVLAo~&channel=7&sessionid=482070240&client_name=uuiprod-un18e6d73c-user-19422&id=true"
+query := r.URL.Query()
+	q := query.Get("message")
+if q == "" {
+		http.Error(w, "missing 'message'", http.StatusBadRequest)
+		return
+	}
+
+ req, err := http.PostForm(CHAT_API, url.Values{"input": {text}})
+if !ERR(err, w) {
+return
+}
+defer req.Body.Close()
+var resp map[string]interface{}
+	json.NewDecoder(req.Body).Decode(&resp)
+	msg := resp["responses"].([]interface{})[0].(string)
+d := `{"message": "` + msg + `"}`
+WriteJson(w, r, d, "")
+
+}
+
+
 func init() {
 	http.HandleFunc("/tpb", Tpb)
 	http.HandleFunc("/google", Google)
 	http.HandleFunc("/youtube", Youtube)
 	http.HandleFunc("/imdb", ImDB)
+        http.HandleFunc("/chatbot", ChatBot)
 }

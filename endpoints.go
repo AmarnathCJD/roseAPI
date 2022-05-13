@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+        "log"
 
 	"github.com/PuerkitoBio/goquery"
 )

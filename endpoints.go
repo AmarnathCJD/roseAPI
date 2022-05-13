@@ -249,7 +249,7 @@ func Lyrics(w http.ResponseWriter, r *http.Request) {
 	}
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	var t string
-        h, _ := doc.HTML()
+        h, _ := doc.Html()
         w.Write([]byte(h))
 	doc.Find("lyric-body-text").Each(func(i int, s *goquery.Selection) {
 		t = s.Text()

@@ -44,3 +44,30 @@ type ImDBResult struct {
 	Link   string `json:"link,omitempty"`
 	Poster string `json:"poster,omitempty"`
 }
+
+type LyricsSearch struct {
+	Response struct {
+		Sections []struct {
+			Hits []struct {
+				Result struct {
+					Type           string `json:"_type"`
+					APIPath        string `json:"api_path"`
+					ArtistNames    string `json:"artist_names"`
+					FullTitle      string `json:"full_title"`
+					HeaderImageURL string `json:"header_image_url"`
+					ID             int    `json:"id"`
+					Title          string `json:"title"`
+					Path           string `json:"path"`
+				} `json:"result"`
+			} `json:"hits"`
+		} `json:"sections"`
+	} `json:"response"`
+}
+
+var _help_ = map[string]string{
+	"google":  `Search Google.` + "\n" + `Usage: {}/google?q=<query>` + "\n" + `Example: {}/google?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Google Result]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
+	"tpb":     `Search The Pirate Bay.` + "\n" + `Usage: {}/tpb?q=<query>` + "\n" + `Example: {}/tpb?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Torrents]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
+	"imdb":    `Search IMDB.` + "\n" + `Usage: {}/imdb?q=<query>` + "\n" + `Example: /imdb?q=Avengers, {}/imdb?id=tt10191320` + "\n" + `Returns:` + "\n" + `    [Array of ImDB Titles or ImDB Single Result]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    id: The IMDB ID. (optional)` + "\n" + `    i: Indentaion (Bool, optional).`,
+	"youtube": `Search YouTube.` + "\n" + `Usage: {}/youtube?q=<query>` + "\n" + `Example: {}/youtube?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Youtube Videos]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
+	"chatbot": `Talk to the Kuki chatbot.` + "\n" + `Usage: {}/chatbot?message=<query>` + "\n" + `Example: {}/chatbot?message=Hello` + "\n" + `Returns:` + "\n" + `    {"message":"response"}` + "\n" + `If internal server error, 502 is returned.` + "\n" + `Parameters:` + "\n" + `    message: The message query.`,
+}

@@ -66,7 +66,7 @@ func WriteJson(w http.ResponseWriter, r *http.Request, data interface{}, i strin
 func CalcPing(w http.ResponseWriter, startTime int64) {
 	w.Header().Set("Content-Type", "application/json")
 	totaltime := time.Since(time.Unix(0, startTime))
-	io.Copy(w, bytes.NewBuffer([]byte(fmt.Sprintf(`}, {"status": "ok", "ping": "%v"}}`, totaltime))))
+	io.Copy(w, bytes.NewBuffer([]byte(fmt.Sprintf(`, "status": "ok", "ping": "%v"}`, totaltime))))
 }
 
 func EncodeJson(v interface{}) string {

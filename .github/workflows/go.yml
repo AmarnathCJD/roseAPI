@@ -26,6 +26,4 @@ jobs:
           commit_user_name: AmarnathCjd
           commit_user_email: 72609355+AmarnathCjd@users.noreply.github.com
           commit_author: AmarnathCjd <72609355+AmarnathCjd+@users.noreply.github.com>
-          branding:
-              icon: 'git-commit'
-              color: orange
+          

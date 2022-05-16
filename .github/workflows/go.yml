@@ -1,5 +1,4 @@
 name: Lint Go
-permissions: write
 on:
   push:
     branches:

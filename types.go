@@ -18,6 +18,14 @@ type YoutubeResult struct {
 	Views       string `json:"views,omitempty"`
 }
 
+type GameResult struct {
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
+	URL         string `json:"url,omitempty"`
+	Poster      string `json:"poster,omitempty"`
+	ID          string `json:"id,omitempty"`
+}
+
 type ImDBData struct {
 	D []struct {
 		I struct {

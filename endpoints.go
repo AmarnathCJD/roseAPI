@@ -250,6 +250,9 @@ func Lyrics(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println(lyricURL)
 	doc, err := goquery.NewDocumentFromReader(resp_2.Body)
+	if !ERR(err, w) {
+		return
+	}
 	var t string
 	h, _ := doc.Html()
 	w.Write([]byte(h))
@@ -277,18 +280,68 @@ func Math(w http.ResponseWriter, r *http.Request) {
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("x-rapidapi-host", "evaluate-expression.p.rapidapi.com")
 	req.Header.Add("x-rapidapi-key", "cf9e67ea99mshecc7e1ddb8e93d1p1b9e04jsn3f1bb9103c3f")
-	q := req.URL.Query()
-	q.Add("expression", c.Message().Payload)
-	req.URL.RawQuery = q.Encode()
-	resp, _ := c.Do(req)
+	_query := req.URL.Query()
+	_query.Add("expression", q)
+	req.URL.RawQuery = _query.Encode()
+	resp, err := c.Do(req)
+	if !ERR(err, w) {
+		return
+	}
 	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
-	if body == "" {
+	var b interface{}
+	json.NewDecoder(resp.Body).Decode(&b)
+	if b == nil {
 		WriteJson(w, r, []byte(`invalid mathematical expression`), "")
 	}
-	WriteJson(w, r, body, "")
-
+	WriteJson(w, r, []byte(`{"expression": "`+q+`", "result": "`+fmt.Sprint(b)+`"}`), "")
 }
+
+func Games(w http.ResponseWriter, r *http.Request) {
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
+		return
+	}
+	q := query.Get("q")
+	i := query.Get("i")
+	if q == "" {
+		http.Error(w, "missing query", http.StatusBadRequest)
+		return
+	}
+	url := "https://repack-mechanics.com/?do=search&subaction=search&story=" + url.QueryEscape(q)
+	resp, err := c.Get(url)
+	if !ERR(err, w) {
+		return
+	}
+	defer resp.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if !ERR(err, w) {
+		return
+	}
+	var d []GameResult
+	doc.Find("div").Each(func(i int, s *goquery.Selection) {
+		if s.HasClass("img-box") {
+			var _d GameResult
+			a := s.Find("a")
+			_d.Description = a.Text()
+			_d.URL = a.AttrOr("href", "")
+			img := s.Find("img")
+			_d.Poster = img.AttrOr("src", "")
+			title_poster := s.Find("h2")
+			_d.Title = title_poster.Text()
+			d = append(d, _d)
+		}
+	})
+	WriteJson(w, r, d, i)
+}
+
+func Pinterest(w http.ResponseWriter, r *http.Request) {
+}
+
+// spotify "https://spclient.wg.spotify.com/color-lyrics/v2/track/0fcnEPWBnqHKqKsR4JXjAS/image/https%3A%2F%2Fi.scdn.co%2Fimage%2Fab67616d0000b2738c0d62cedeabf6b7204c65f9?format=json&vocalRemoval=false&market=from_token"
+// trackID + imgeURL fetch....
+// Lyrics API Boom
 
 func init() {
 	http.HandleFunc("/tpb", Tpb)
@@ -298,4 +351,5 @@ func init() {
 	http.HandleFunc("/chatbot", ChatBot)
 	http.HandleFunc("/lyrics", Lyrics)
 	http.HandleFunc("/math", Math)
+	http.HandleFunc("/game", Games)
 }

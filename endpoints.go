@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
 	"time"
-        "log"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -248,11 +248,11 @@ func Lyrics(w http.ResponseWriter, r *http.Request) {
 	if !ERR(err, w) {
 		return
 	}
-        log.Println(lyricURL)
+	log.Println(lyricURL)
 	doc, err := goquery.NewDocumentFromReader(resp_2.Body)
 	var t string
-        h, _ := doc.Html()
-        w.Write([]byte(h))
+	h, _ := doc.Html()
+	w.Write([]byte(h))
 	doc.Find("lyric-body-text").Each(func(i int, s *goquery.Selection) {
 		t = s.Text()
 		fmt.Println(t)
@@ -262,7 +262,7 @@ func Lyrics(w http.ResponseWriter, r *http.Request) {
 }
 
 func Math(w http.ResponseWriter, r *http.Request) {
- r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
@@ -273,21 +273,20 @@ func Math(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "missing query", http.StatusBadRequest)
 		return
 	}
- url := "https://evaluate-expression.p.rapidapi.com"
-		req, _ := http.NewRequest("GET", url, nil)
-		req.Header.Add("x-rapidapi-host", "evaluate-expression.p.rapidapi.com")
-		req.Header.Add("x-rapidapi-key", "cf9e67ea99mshecc7e1ddb8e93d1p1b9e04jsn3f1bb9103c3f")
-		q := req.URL.Query()
-		q.Add("expression", c.Message().Payload)
-		req.URL.RawQuery = q.Encode()
- resp, _ := c.Do(req)
- defer resp.Body.Close()
- body, _ := ioutil.ReadAll(res.Body)
- if body == "" {
-    WriteJson(w, r, []byte(`invalid mathematical expression`), "")
- }
- WriteJson(w, r, body, "")
-
+	url := "https://evaluate-expression.p.rapidapi.com"
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("x-rapidapi-host", "evaluate-expression.p.rapidapi.com")
+	req.Header.Add("x-rapidapi-key", "cf9e67ea99mshecc7e1ddb8e93d1p1b9e04jsn3f1bb9103c3f")
+	q := req.URL.Query()
+	q.Add("expression", c.Message().Payload)
+	req.URL.RawQuery = q.Encode()
+	resp, _ := c.Do(req)
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(res.Body)
+	if body == "" {
+		WriteJson(w, r, []byte(`invalid mathematical expression`), "")
+	}
+	WriteJson(w, r, body, "")
 
 }
 
@@ -298,5 +297,5 @@ func init() {
 	http.HandleFunc("/imdb", ImDB)
 	http.HandleFunc("/chatbot", ChatBot)
 	http.HandleFunc("/lyrics", Lyrics)
-        http.HandleFunc("/math", Math)
+	http.HandleFunc("/math", Math)
 }

@@ -298,4 +298,5 @@ func init() {
 	http.HandleFunc("/imdb", ImDB)
 	http.HandleFunc("/chatbot", ChatBot)
 	http.HandleFunc("/lyrics", Lyrics)
+        http.HandleFunc("/math", Math)
 }

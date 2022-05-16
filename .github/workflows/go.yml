@@ -1,5 +1,5 @@
 name: Lint Go
-permissions: read-all|write-all
+permissions: write
 on:
   push:
     branches:

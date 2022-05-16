@@ -292,7 +292,7 @@ func Math(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(resp.Body).Decode(&b)
 	if b == nil {
 		WriteJson(w, r, []byte(`invalid mathematical expression`), "")
-                return 
+		return
 	}
 	WriteJson(w, r, []byte(`{"expression": "`+q+`", "result": "`+fmt.Sprint(b)+`"}`), "")
 }

@@ -212,16 +212,38 @@ func SearchSptfy(query string, accessToken string) SpotifyResult {
 	return result
 }
 
-func FetchLyrics(urI string, accessToken string) LyricsR {
-	req, _ := http.NewRequest("GET", "https://spclient.wg.spotify.com/color-lyrics/v2/track/"+urI+"?format=json&vocalRemoval=false&market=from_token", nil)
-	req.Header.Set("app-platform", "WebPlayer")
-	req.Header.Set("authorization", "Bearer "+accessToken)
-	resp, err := c.Do(req)
+func Addiotonal(urI string) {
+	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/tracks?ids=14jSfsXObzCumwn8wX9amf,3XYvdqcZrTmRntFDDbJkJd,5raWEZXYAapq6Qw1GIEIkU&market=from_token", nil)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
-	defer resp.Body.Close()
-	var l LyricsR
-	json.NewDecoder(resp.Body).Decode(&l)
-	return l
+	req.Header.Set("sec-ch-ua", `" Not A;Brand";v="99", "Chromium";v="101", "Google Chrome";v="101"`)
+	req.Header.Set("authorization", "Bearer BQDbVhcmEEHvJXuZI3s98dCZEHdw3bCd6Lwj_fqKSTursZcT60emPmEVQr1uQXIrGEvtF3XkT37LXA79MfN754aExY-CV97Lp7m8ailXNIIqF9mYFotVWzl-hD-ePseJDZQUEHxOCJPSqxNBsg4DgbDBZhTAFx8xksCdildsBv6QEOvmDtG1DDBKtRYE7l9VG2qMae4a5cNuu5qizP31-tBUuOvav2qWOr3-rGareoA9AnqhjPL5VuRpquhyqIOWfWcen2CCj1tSrs-b-XohUEJRo-2nVm89p-UlEMHpyKpuqX2TIuIllWbY")
+	req.Header.Set("Referer", "https://open.spotify.com/")
+	req.Header.Set("DNT", "1")
+	req.Header.Set("sec-ch-ua-mobile", "?0")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Safari/537.36")
+	req.Header.Set("sec-ch-ua-platform", `"Linux"`)
+	c.Do(req)
+}
+
+func FetchLyrics(urI []string, accessToken string) LyricsR {
+	var lk LyricsR
+	for _, u := range urI {
+		req, _ := http.NewRequest("GET", "https://spclient.wg.spotify.com/color-lyrics/v2/track/"+u+"?format=json&vocalRemoval=false&market=from_token", nil)
+		req.Header.Set("app-platform", "WebPlayer")
+		req.Header.Set("authorization", "Bearer "+accessToken)
+		resp, err := c.Do(req)
+		if err != nil {
+			log.Println(err)
+		}
+		defer resp.Body.Close()
+		var l LyricsR
+		json.NewDecoder(resp.Body).Decode(&l)
+		if l.Lyrics.Lines != nil {
+			lk = l
+			break
+		}
+	}
+	return lk
 }

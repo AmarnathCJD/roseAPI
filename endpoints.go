@@ -396,7 +396,11 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 	t := GetSpotifyCred()
 	s := SearchSptfy(q, t)
 	var data = s.Data.SearchV2.Albums.Items
-	l := FetchLyrics(data[0].Data.URI, t)
+	var Uris []string
+	for _, v := range data {
+		Uris = append(Uris, v.Data.URI)
+	}
+	l := FetchLyrics(Uris, t)
 	d, _ := json.Marshal(l)
 	WriteJson(w, r, EncodeJson(d), i)
 }

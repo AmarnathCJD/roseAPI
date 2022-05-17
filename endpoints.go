@@ -392,6 +392,7 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ly := Ly3(q)
+        ly = ` {"lyrics": "` + ly + `"}`
 	WriteJson(w, r, ly, i)
 }
 

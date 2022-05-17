@@ -286,7 +286,7 @@ func Ly3(q string) string {
 		})
 	})
 	bse := "https://gaana.com/lyrics/" + result[0]
-	r, err := c.Do(bse)
+	r, err := c.Get(bse)
 	if err != nil {
 		log.Println(err)
 	}

@@ -375,8 +375,7 @@ func Spotify(w http.ResponseWriter, r *http.Request) {
 	s := SearchSptfy(q, t)
 	var data = s.Data.SearchV2.Albums.Items
 	d, _ := json.Marshal(data)
-	_d := strings.ReplaceAll(string(d), "\", "")
-	WriteJson(w, r, EncodeJson(_d), i)
+	WriteJson(w, r, string(d), i)
 }
 
 func LyricsA(w http.ResponseWriter, r *http.Request) {
@@ -388,13 +387,20 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 	}
 	q := query.Get("q")
 	i := query.Get("i")
-	id := query.Get("id")
+	uri := query.Get("uri")
 	if q == "" {
 		http.Error(w, "missing query", http.StatusBadRequest)
 		return
 	}
+t := GetSpotifyCred()
+        if uri != "" {
+l := FetchLyrics(uri, t)
+d, _ := json.Marshal(l)
+WriteJson(w, r, string(d), i)
+return 
+}
 	fmt.Println(i, id)
-	t := GetSpotifyCred()
+	
 	s := SearchSptfy(q, t)
 	var data = s.Data.SearchV2.Albums.Items
 	l := FetchLyrics(data[0].Data.URI, t)

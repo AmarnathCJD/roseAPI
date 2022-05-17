@@ -393,7 +393,7 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 	}
 	ly := Ly3(q)
 	ly = strings.TrimSpace(ly)
-        ly = `"`+ly+`"`
+	ly = `"` + ly + `"`
 	WriteJson(w, r, ly, i)
 }
 

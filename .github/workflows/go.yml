@@ -19,7 +19,8 @@ jobs:
           go mod tidy -compat=1.17
           gofmt -l -s -w .
           go vet
-          go run main.go
+          go build 
+          ./main
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: 'RoseLoverX: auto fixes'

@@ -399,7 +399,7 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 			ly_list = append(ly_list, a)
 		}
 	}
-        _ily := strings.Join(ly_list, "\n")
+	_ily := strings.Join(ly_list, "\n")
 	WriteJson(w, r, _ily, i)
 }
 

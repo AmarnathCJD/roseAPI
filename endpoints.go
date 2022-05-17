@@ -391,7 +391,7 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "missing query", http.StatusBadRequest)
 		return
 	}
-	ly := FetchLy(q)
+	ly := Ly3(q)
 	WriteJson(w, r, ly, i)
 }
 

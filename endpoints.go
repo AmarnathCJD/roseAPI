@@ -375,7 +375,7 @@ func Spotify(w http.ResponseWriter, r *http.Request) {
 	s := SearchSptfy(q, t)
 	var data = s.Data.SearchV2.Albums.Items
 	d, _ := json.Marshal(data)
-        _d := strings.ReplaceAll(string(d), "\\", "")
+	_d := strings.ReplaceAll(string(d), "\\", "")
 	WriteJson(w, r, EncodeJson(_d), i)
 }
 

@@ -291,13 +291,14 @@ func Ly3(q string) string {
 		log.Println(err)
 	}
 	defer r.Body.Close()
+        var Lyric string 
 	doc, _ := goquery.NewDocumentFromReader(r.Body)
 	doc.Find("div").Each(func(i int, s *goquery.Selection) {
 		if s.HasClass("lyr_data") {
-			return s.Text()
+			Lyric = s.Text()
 		}
 	})
-	return ""
+	return Lyric
 }
 
 // https://gaana.com/lyrics/coca-cola-38

@@ -268,7 +268,7 @@ func FetchLy(query string) string {
 	return _ly
 }
 
-func Ly3(q string) {
+func Ly3(q string) string {
 	url := "https://gsearch-prod-cloud.gaana.com/gaanasearch-api/mobilesuggest/autosuggest-lite-vltr-ro?geoLocation=IN&query=" + url.QueryEscape(q) + "&content_filter=2&include=allItems&isRegSrch=0&webVersion=mix&rType=web&usrLang=Hindi,English,Punjabi&isChrome=1"
 	resp, err := Aclient.Get(url)
 	if err != nil {
@@ -285,7 +285,19 @@ func Ly3(q string) {
 			result = append(result, seo)
 		})
 	})
-	fmt.Println(result)
+	bse := "https://gaana.com/lyrics/" + result[0]
+        r, err := c.Do(bse)
+        if err != nil {
+log.Println(err)
+}
+defer r.Body.Close()
+doc, _ := goquery.NewDocumentFromReader(r.Body)
+doc.Find("div").Each(func(i int, s *goquery.Selection) {
+		if s.HasClass("lyr_data") {
+return s.Text()
+}
+})
+return ""
 }
 
 // https://gaana.com/lyrics/coca-cola-38

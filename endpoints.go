@@ -388,7 +388,7 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 	q := query.Get("q")
 	i := query.Get("i")
 	uri := query.Get("uri")
-	if q == "" {
+	if q == "" && uri == "" {
 		http.Error(w, "missing query", http.StatusBadRequest)
 		return
 	}
@@ -399,8 +399,6 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 		WriteJson(w, r, string(d), i)
 		return
 	}
-	fmt.Println(i, id)
-
 	s := SearchSptfy(q, t)
 	var data = s.Data.SearchV2.Albums.Items
 	l := FetchLyrics(data[0].Data.URI, t)

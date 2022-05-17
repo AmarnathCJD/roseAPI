@@ -387,27 +387,12 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 	}
 	q := query.Get("q")
 	i := query.Get("i")
-	uri := query.Get("uri")
-	if q == "" && uri == "" {
+	if q == "" {
 		http.Error(w, "missing query", http.StatusBadRequest)
 		return
 	}
-	t := GetSpotifyCred()
-	if uri != "" {
-		l := FetchLyrics(uri, t)
-		d, _ := json.Marshal(l)
-		WriteJson(w, r, string(d), i)
-		return
-	}
-	s := SearchSptfy(q, t)
-	var data = s.Data.SearchV2.Albums.Items
-	var Uris []string
-	for _, v := range data {
-		Uris = append(Uris, v.Data.URI)
-	}
-	l := FetchLyrics(Uris, t)
-	d, _ := json.Marshal(l)
-	WriteJson(w, r, EncodeJson(string(d)), i)
+	ly := FetchLy(q)
+	WriteJson(w, r, ly, i)
 }
 
 // spotify "https://spclient.wg.spotify.com/color-lyrics/v2/track/0fcnEPWBnqHKqKsR4JXjAS/image/https%3A%2F%2Fi.scdn.co%2Fimage%2Fab67616d0000b2738c0d62cedeabf6b7204c65f9?format=json&vocalRemoval=false&market=from_token"

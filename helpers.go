@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,6 +13,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/buger/jsonparser"
@@ -22,7 +24,16 @@ var (
 		"access_token": "",
 		"expires_in":   "",
 	}
+	Aclient = NewAPIClient()
 )
+
+func NewAPIClient() *http.Client {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // <--- Problem
+	}
+	c := &http.Client{Transport: tr}
+	return c
+}
 
 func fetchPort() string {
 	var p = os.Getenv("PORT")
@@ -227,23 +238,54 @@ func Addiotonal(urI string) {
 	c.Do(req)
 }
 
-func FetchLyrics(urI []string, accessToken string) LyricsR {
-	var lk LyricsR
-	for _, u := range urI {
-		req, _ := http.NewRequest("GET", "https://spclient.wg.spotify.com/color-lyrics/v2/track/"+u+"?format=json&vocalRemoval=false&market=from_token", nil)
-		req.Header.Set("app-platform", "WebPlayer")
-		req.Header.Set("authorization", "Bearer "+accessToken)
-		resp, err := c.Do(req)
-		if err != nil {
-			log.Println(err)
-		}
-		defer resp.Body.Close()
-		var l LyricsR
-		json.NewDecoder(resp.Body).Decode(&l)
-		if l.Lyrics.Lines != nil {
-			lk = l
-			break
-		}
+// spotify lyrics tricky
+
+func FetchLy(query string) string {
+	url := "https://api.musixmatch.com/ws/1.1/track.search?q_track=" + url.QueryEscape(query) + "&page_size=3&page=1&s_track_rating=desc&apikey=6efc39fa2ad207c07d3d814749804a9b"
+	req, _ := http.NewRequest("GET", url, nil)
+	r, err := c.Do(req)
+	if err != nil {
+		log.Println(err)
 	}
-	return lk
+	defer r.Body.Close()
+	body, _ := ioutil.ReadAll(r.Body)
+	mzk, _, _, _ := jsonparser.Get(body, "message", "body", "track_list")
+	var result []string
+	jsonparser.ArrayEach(mzk, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		res, _, _, _ := jsonparser.Get(value, "track", "track_id")
+		result = append(result, string(res))
+	})
+	req_2, _ := http.NewRequest("GET", "https://api.musixmatch.com/ws/1.1/track.lyrics.get?track_id="+result[0]+"&apikey=6efc39fa2ad207c07d3d814749804a9b", nil)
+	r_2, err := c.Do(req_2)
+	if err != nil {
+		log.Println(err)
+	}
+	defer r_2.Body.Close()
+	body_2, _ := ioutil.ReadAll(r_2.Body)
+	ly, _, _, _ := jsonparser.Get(body_2, "message", "body", "lyrics", "lyrics_body")
+	_ly := string(ly)
+	_ly = strings.Replace(_ly, "******* This Lyrics is NOT for Commercial use *******", "", -1)
+	return _ly
 }
+
+func Ly3(q string) {
+	url := "https://gsearch-prod-cloud.gaana.com/gaanasearch-api/mobilesuggest/autosuggest-lite-vltr-ro?geoLocation=IN&query=" + url.QueryEscape(q) + "&content_filter=2&include=allItems&isRegSrch=0&webVersion=mix&rType=web&usrLang=Hindi,English,Punjabi&isChrome=1"
+	resp, err := Aclient.Get(url)
+	if err != nil {
+		log.Println(err)
+	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	var result []string
+	b, _, _, _ := jsonparser.Get(body, "gr")
+	jsonparser.ArrayEach(b, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		gd, _, _, _ := jsonparser.Get(value, "gd")
+		jsonparser.ArrayEach(gd, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+			seo, _ := jsonparser.GetString(value, "seo")
+			result = append(result, seo)
+		})
+	})
+	fmt.Println(result)
+}
+
+// https://gaana.com/lyrics/coca-cola-38

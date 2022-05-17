@@ -392,15 +392,15 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "missing query", http.StatusBadRequest)
 		return
 	}
-t := GetSpotifyCred()
-        if uri != "" {
-l := FetchLyrics(uri, t)
-d, _ := json.Marshal(l)
-WriteJson(w, r, string(d), i)
-return 
-}
+	t := GetSpotifyCred()
+	if uri != "" {
+		l := FetchLyrics(uri, t)
+		d, _ := json.Marshal(l)
+		WriteJson(w, r, string(d), i)
+		return
+	}
 	fmt.Println(i, id)
-	
+
 	s := SearchSptfy(q, t)
 	var data = s.Data.SearchV2.Albums.Items
 	l := FetchLyrics(data[0].Data.URI, t)

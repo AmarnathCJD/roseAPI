@@ -19,8 +19,7 @@ jobs:
           go mod tidy -compat=1.17
           gofmt -l -s -w .
           go vet
-          go build 
-          ./main
+      - uses: dominikh/staticcheck-action@v1.2.0
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: 'RoseLoverX: auto fixes'

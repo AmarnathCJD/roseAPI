@@ -291,7 +291,7 @@ func Ly3(q string) string {
 		log.Println(err)
 	}
 	defer r.Body.Close()
-        var Lyric string 
+	var Lyric string
 	doc, _ := goquery.NewDocumentFromReader(r.Body)
 	doc.Find("div").Each(func(i int, s *goquery.Selection) {
 		if s.HasClass("lyr_data") {

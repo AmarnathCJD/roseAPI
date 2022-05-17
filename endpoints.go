@@ -378,6 +378,29 @@ func Spotify(w http.ResponseWriter, r *http.Request) {
 	WriteJson(w, r, EncodeJson(d), i)
 }
 
+func LyricsA(w http.ResponseWriter, r *http.Request) {
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
+		return
+	}
+	q := query.Get("q")
+	i := query.Get("i")
+	id := query.Get("id")
+	if q == "" {
+		http.Error(w, "missing query", http.StatusBadRequest)
+		return
+	}
+	fmt.Println(i, id)
+	t := GetSpotifyCred()
+	s := SearchSptfy(q, t)
+	var data = s.Data.SearchV2.Albums.Items
+	l := FetchLyrics(data[0].Data.URI, t)
+	d, _ := json.Marshal(l)
+	WriteJson(w, r, EncodeJson(d), i)
+}
+
 // spotify "https://spclient.wg.spotify.com/color-lyrics/v2/track/0fcnEPWBnqHKqKsR4JXjAS/image/https%3A%2F%2Fi.scdn.co%2Fimage%2Fab67616d0000b2738c0d62cedeabf6b7204c65f9?format=json&vocalRemoval=false&market=from_token"
 // trackID + imgeURL fetch....
 // Lyrics API Boom
@@ -388,7 +411,7 @@ func init() {
 	http.HandleFunc("/youtube", Youtube)
 	http.HandleFunc("/imdb", ImDB)
 	http.HandleFunc("/chatbot", ChatBot)
-	http.HandleFunc("/lyrics", Lyrics)
+	http.HandleFunc("/lyrics", LyricsA)
 	http.HandleFunc("/math", Math)
 	http.HandleFunc("/game", Games)
 	http.HandleFunc("/spotify", Spotify)

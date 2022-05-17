@@ -393,15 +393,13 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 	}
 	ly := Ly3(q)
 	ly = strings.TrimSpace(ly)
-	_ly_ := strings.Split(ly, "\n")
-	var _ly string
-	for _, i := range _ly_ {
-		if i == "" {
-			continue
-		}
-		_ly += i
+	var ly_list []string
+	for _, a := range strings.Split(ly, "\n") {
+		if a != "" {
+ly_list = append(ly_list, a)
+}
 	}
-	ly = `"` + _ly + `"`
+        ly = fmt.Sprint(ly_list)
 	WriteJson(w, r, ly, i)
 }
 

@@ -374,7 +374,8 @@ func Spotify(w http.ResponseWriter, r *http.Request) {
 	}
 	s := SearchSptfy(q, t)
 	var data = s.Data.SearchV2.Albums.Items
-	WriteJson(w, r, data, i)
+	d, _ := json.Marshal(data)
+	WriteJson(w, r, EncodeJson(d), i)
 }
 
 // spotify "https://spclient.wg.spotify.com/color-lyrics/v2/track/0fcnEPWBnqHKqKsR4JXjAS/image/https%3A%2F%2Fi.scdn.co%2Fimage%2Fab67616d0000b2738c0d62cedeabf6b7204c65f9?format=json&vocalRemoval=false&market=from_token"

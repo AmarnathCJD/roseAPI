@@ -394,11 +394,11 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 	ly := Ly3(q)
 	ly = strings.TrimSpace(ly)
 	_ly_ := strings.Split(ly, "\n")
-        var _ly string 
+	var _ly string
 	for _, i := range _ly_ {
-                if i == "" {
-continue
-}
+		if i == "" {
+			continue
+		}
 		_ly += i
 	}
 	ly = `"` + _ly + `"`

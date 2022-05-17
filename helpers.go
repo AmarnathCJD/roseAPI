@@ -6,12 +6,22 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"time"
 
 	"github.com/buger/jsonparser"
+)
+
+var (
+	spotifyClient = map[string]string{
+		"access_token": "",
+		"expires_in":   "",
+	}
 )
 
 func fetchPort() string {
@@ -143,4 +153,75 @@ func ParseYoutubeRAW(raw string) []byte {
 	})
 	data, _ := json.Marshal(Results)
 	return data
+}
+
+func GetSpotifyCred() string {
+	if spotifyClient["access_token"] == "" {
+		token, expire := GenSpotifyToken()
+		spotifyClient["access_token"] = token
+		spotifyClient["expire"] = expire
+		return token
+	} else {
+		exp, _ := strconv.ParseInt(spotifyClient["expire"], 10, 64)
+		if time.Now().Unix() > (exp / 1000) {
+			token, expire := GenSpotifyToken()
+			spotifyClient["access_token"] = token
+			spotifyClient["expire"] = expire
+			return token
+		} else {
+			return spotifyClient["access_token"]
+		}
+	}
+}
+
+func GenSpotifyToken() (string, string) {
+	req, _ := http.NewRequest("GET", "https://open.spotify.com/", nil)
+	req.Header.Set("cookie", "sp_t=db7961ffe77e0f185d4a6c0d2fa5c47a; sp_landing=https%3A%2F%2Fopen.spotify.com%2F%3Fsp_cid%3Ddb7961ffe77e0f185d4a6c0d2fa5c47a%26device%3Ddesktop; sp_dc=AQAUUpb67K1lWwc1699YYBH19NdNSCbWWjCSWTwnK-gFIy5ik30bSF4caXyUL_ZiwvEDQ8DnfMhMdWWme75KJisRIw08KEI7sJWWrhuuu0rO8EzWyByMqEAd38uZVikquXaOUBKpj2sEWSCE7Es_RcNxtkpJM3ZL; sp_key=52113a31-3729-4bb1-8346-8dfa5ecac746; OptanonAlertBoxClosed=2022-05-17T05:27:23.537Z; OptanonConsent=isIABGlobal=false&datestamp=Tue+May+17+2022+13%3A25%3A58+GMT%2B0530+(India+Standard+Time)&version=6.26.0&hosts=&landingPath=NotLandingPage&groups=s00%3A1%2Cf00%3A1%2Cm00%3A1%2Ct00%3A1%2Ci00%3A1%2Cf02%3A1%2Cm02%3A1%2Ct02%3A1&geolocation=IN%3BKL&AwaitingReconsent=false")
+	resp, err := c.Do(req)
+	if err != nil {
+		log.Println(err)
+	}
+	defer resp.Body.Close()
+	accessTokenReg := regexp.MustCompile(`"accessToken":"(.+?)"`)
+	expireTimeReg := regexp.MustCompile(`"accessTokenExpirationTimestampMs":(\d+)`)
+	var body []byte
+	body, _ = ioutil.ReadAll(resp.Body)
+	accessToken := accessTokenReg.FindStringSubmatch(string(body))
+	expireTime := expireTimeReg.FindStringSubmatch(string(body))
+	if len(accessToken) > 1 {
+		return accessToken[1], expireTime[1]
+	} else {
+		return "", ""
+	}
+}
+
+func SearchSptfy(query string, accessToken string) SpotifyResult {
+	req, _ := http.NewRequest("GET", `https://api-partner.spotify.com/pathfinder/v1/query?operationName=searchDesktop&variables=%7B%22searchTerm%22%3A%22`+url.QueryEscape(query)+`%22%2C%22offset%22%3A0%2C%22limit%22%3A10%2C%22numberOfTopResults%22%3A5%2C%22includeAudiobooks%22%3Afalse%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%2219967195df75ab8b51161b5ac4586eab9cf73b51b35a03010073533c33fd11ae%22%7D%7D`, nil)
+	req.Header.Set("app-platform", "WebPlayer")
+	req.Header.Set("authorization", "Bearer "+accessToken)
+	resp, err := c.Do(req)
+	if err != nil {
+		log.Println(err)
+	}
+	defer resp.Body.Close()
+	if err != nil {
+		log.Println(err)
+	}
+	var result SpotifyResult
+	json.NewDecoder(resp.Body).Decode(&result)
+	return result
+}
+
+func FetchLyrics(urI string, accessToken string) LyricsR {
+	req, _ := http.NewRequest("GET", "https://spclient.wg.spotify.com/color-lyrics/v2/track/"+urI+"?format=json&vocalRemoval=false&market=from_token", nil)
+	req.Header.Set("app-platform", "WebPlayer")
+	req.Header.Set("authorization", "Bearer "+accessToken)
+	resp, err := c.Do(req)
+	if err != nil {
+		log.Println(err)
+	}
+	defer resp.Body.Close()
+	var l LyricsR
+	json.NewDecoder(resp.Body).Decode(&l)
+	return l
 }

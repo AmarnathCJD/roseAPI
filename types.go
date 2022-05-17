@@ -72,6 +72,49 @@ type LyricsSearch struct {
 	} `json:"response"`
 }
 
+type SpotifyResult struct {
+	Data struct {
+		SearchV2 struct {
+			Albums struct {
+				TotalCount int `json:"totalCount"`
+				Items      []struct {
+					Data struct {
+						Typename string `json:"__typename"`
+						URI      string `json:"uri"`
+						Name     string `json:"name"`
+						Artists  struct {
+							Items []struct {
+								URI     string `json:"uri"`
+								Profile struct {
+									Name string `json:"name"`
+								} `json:"profile"`
+							} `json:"items"`
+						} `json:"artists"`
+						CoverArt struct {
+							Sources []struct {
+								URL string `json:"url"`
+							} `json:"sources"`
+						} `json:"coverArt"`
+						Date struct {
+							Year int `json:"year"`
+						} `json:"date"`
+					} `json:"data"`
+				} `json:"items"`
+			} `json:"albums"`
+		} `json:"searchV2"`
+	} `json:"data"`
+}
+
+type LyricsR struct {
+	Lyrics struct {
+		Lines []struct {
+			StartTimeMs string `json:"startTimeMs"`
+			Words       string `json:"words"`
+		} `json:"lines"`
+		Language string `json:"language"`
+	} `json:"lyrics"`
+}
+
 var _help_ = map[string]string{
 	"google":  `Search Google.` + "\n" + `Usage: {}/google?q=<query>` + "\n" + `Example: {}/google?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Google Result]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
 	"tpb":     `Search The Pirate Bay.` + "\n" + `Usage: {}/tpb?q=<query>` + "\n" + `Example: {}/tpb?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Torrents]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,

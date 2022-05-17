@@ -264,6 +264,20 @@ func Lyrics(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func LyricsAPI(w http.ResponseWriter, r *http.Request) {
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
+		return
+	}
+	q := query.Get("q")
+	if q == "" {
+		http.Error(w, "missing query", http.StatusBadRequest)
+		return
+	}
+}
+
 func Math(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
@@ -340,6 +354,29 @@ func Games(w http.ResponseWriter, r *http.Request) {
 func Pinterest(w http.ResponseWriter, r *http.Request) {
 }
 
+func Spotify(w http.ResponseWriter, r *http.Request) {
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
+		return
+	}
+	q := query.Get("q")
+	i := query.Get("i")
+	if q == "" {
+		http.Error(w, "missing query", http.StatusBadRequest)
+		return
+	}
+	t := GetSpotifyCred()
+	if t == "" {
+		http.Error(w, "missing spotify credentials", http.StatusBadRequest)
+		return
+	}
+	s := SearchSptfy(q, t)
+	var data = s.Data.SearchV2.Albums.Items
+	WriteJson(w, r, data, i)
+}
+
 // spotify "https://spclient.wg.spotify.com/color-lyrics/v2/track/0fcnEPWBnqHKqKsR4JXjAS/image/https%3A%2F%2Fi.scdn.co%2Fimage%2Fab67616d0000b2738c0d62cedeabf6b7204c65f9?format=json&vocalRemoval=false&market=from_token"
 // trackID + imgeURL fetch....
 // Lyrics API Boom
@@ -353,4 +390,5 @@ func init() {
 	http.HandleFunc("/lyrics", Lyrics)
 	http.HandleFunc("/math", Math)
 	http.HandleFunc("/game", Games)
+	http.HandleFunc("/spotify", Spotify)
 }

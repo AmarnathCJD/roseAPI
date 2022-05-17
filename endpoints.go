@@ -375,7 +375,7 @@ func Spotify(w http.ResponseWriter, r *http.Request) {
 	s := SearchSptfy(q, t)
 	var data = s.Data.SearchV2.Albums.Items
 	d, _ := json.Marshal(data)
-	WriteJson(w, r, EncodeJson(d), i)
+	WriteJson(w, r, string(d), i)
 }
 
 func LyricsA(w http.ResponseWriter, r *http.Request) {
@@ -387,13 +387,18 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 	}
 	q := query.Get("q")
 	i := query.Get("i")
-	id := query.Get("id")
-	if q == "" {
+	uri := query.Get("uri")
+	if q == "" && uri == "" {
 		http.Error(w, "missing query", http.StatusBadRequest)
 		return
 	}
-	fmt.Println(i, id)
 	t := GetSpotifyCred()
+	if uri != "" {
+		l := FetchLyrics(uri, t)
+		d, _ := json.Marshal(l)
+		WriteJson(w, r, string(d), i)
+		return
+	}
 	s := SearchSptfy(q, t)
 	var data = s.Data.SearchV2.Albums.Items
 	var Uris []string
@@ -402,7 +407,7 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 	}
 	l := FetchLyrics(Uris, t)
 	d, _ := json.Marshal(l)
-	WriteJson(w, r, EncodeJson(d), i)
+	WriteJson(w, r, EncodeJson(string(d)), i)
 }
 
 // spotify "https://spclient.wg.spotify.com/color-lyrics/v2/track/0fcnEPWBnqHKqKsR4JXjAS/image/https%3A%2F%2Fi.scdn.co%2Fimage%2Fab67616d0000b2738c0d62cedeabf6b7204c65f9?format=json&vocalRemoval=false&market=from_token"

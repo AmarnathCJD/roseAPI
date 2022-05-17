@@ -400,7 +400,7 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	_ily := strings.Join(ly_list, "\n")
-	WriteJson(w, r, EncodeJson(`"` + _ily + `"`), i)
+	WriteJson(w, r, EncodeJson(`"`+_ily+`"`), i)
 }
 
 // spotify "https://spclient.wg.spotify.com/color-lyrics/v2/track/0fcnEPWBnqHKqKsR4JXjAS/image/https%3A%2F%2Fi.scdn.co%2Fimage%2Fab67616d0000b2738c0d62cedeabf6b7204c65f9?format=json&vocalRemoval=false&market=from_token"

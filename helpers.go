@@ -5,6 +5,8 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
+	"github.com/buger/jsonparser"
 	"io"
 	"io/ioutil"
 	"log"
@@ -15,8 +17,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-        "github.com/PuerkitoBio/goquery"
-	"github.com/buger/jsonparser"
 )
 
 var (
@@ -286,18 +286,18 @@ func Ly3(q string) string {
 		})
 	})
 	bse := "https://gaana.com/lyrics/" + result[0]
-        r, err := c.Do(bse)
-        if err != nil {
-log.Println(err)
-}
-defer r.Body.Close()
-doc, _ := goquery.NewDocumentFromReader(r.Body)
-doc.Find("div").Each(func(i int, s *goquery.Selection) {
+	r, err := c.Do(bse)
+	if err != nil {
+		log.Println(err)
+	}
+	defer r.Body.Close()
+	doc, _ := goquery.NewDocumentFromReader(r.Body)
+	doc.Find("div").Each(func(i int, s *goquery.Selection) {
 		if s.HasClass("lyr_data") {
-return s.Text()
-}
-})
-return ""
+			return s.Text()
+		}
+	})
+	return ""
 }
 
 // https://gaana.com/lyrics/coca-cola-38

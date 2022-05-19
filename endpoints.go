@@ -421,7 +421,7 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	d := StreamSrc(q)
-	WriteJson(w, r, d, i)
+	WriteJson(w, r, EncodeJson(d), i)
 }
 
 func init() {

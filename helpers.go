@@ -283,7 +283,7 @@ func StreamSrc(query string) []StreamS {
 	doc.Find(".price-comparison__grid__row__element").Each(func(i int, s *goquery.Selection) {
 		a := s.Find("a")
 		img := a.Find("img")
-		src = append(src, StreamS{img.AttrOr("alt", ""), strings.TrimSpace(s.Find("span").Text()), a.AttrOr("href", ""), "Stream", s.Find(".price-comparison__grid__row__price").Text()})
+		src = append(src, StreamS{img.AttrOr("alt", ""), strings.TrimSpace(s.Find("span").Text()), a.AttrOr("href", ""), "Stream", strings.TrimSpace(s.Find(".price-comparison__grid__row__price").Text())})
 	})
 	return src
 }

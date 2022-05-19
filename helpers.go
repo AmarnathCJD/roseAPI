@@ -5,8 +5,6 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/buger/jsonparser"
 	"io"
 	"io/ioutil"
 	"log"
@@ -17,6 +15,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/buger/jsonparser"
 )
 
 var (
@@ -223,51 +224,6 @@ func SearchSptfy(query string, accessToken string) SpotifyResult {
 	return result
 }
 
-func Addiotonal(urI string) {
-	req, err := http.NewRequest("GET", "https://api.spotify.com/v1/tracks?ids=14jSfsXObzCumwn8wX9amf,3XYvdqcZrTmRntFDDbJkJd,5raWEZXYAapq6Qw1GIEIkU&market=from_token", nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	req.Header.Set("sec-ch-ua", `" Not A;Brand";v="99", "Chromium";v="101", "Google Chrome";v="101"`)
-	req.Header.Set("authorization", "Bearer BQDbVhcmEEHvJXuZI3s98dCZEHdw3bCd6Lwj_fqKSTursZcT60emPmEVQr1uQXIrGEvtF3XkT37LXA79MfN754aExY-CV97Lp7m8ailXNIIqF9mYFotVWzl-hD-ePseJDZQUEHxOCJPSqxNBsg4DgbDBZhTAFx8xksCdildsBv6QEOvmDtG1DDBKtRYE7l9VG2qMae4a5cNuu5qizP31-tBUuOvav2qWOr3-rGareoA9AnqhjPL5VuRpquhyqIOWfWcen2CCj1tSrs-b-XohUEJRo-2nVm89p-UlEMHpyKpuqX2TIuIllWbY")
-	req.Header.Set("Referer", "https://open.spotify.com/")
-	req.Header.Set("DNT", "1")
-	req.Header.Set("sec-ch-ua-mobile", "?0")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.0.0 Safari/537.36")
-	req.Header.Set("sec-ch-ua-platform", `"Linux"`)
-	c.Do(req)
-}
-
-// spotify lyrics tricky
-
-func FetchLy(query string) string {
-	url := "https://api.musixmatch.com/ws/1.1/track.search?q_track=" + url.QueryEscape(query) + "&page_size=3&page=1&s_track_rating=desc&apikey=6efc39fa2ad207c07d3d814749804a9b"
-	req, _ := http.NewRequest("GET", url, nil)
-	r, err := c.Do(req)
-	if err != nil {
-		log.Println(err)
-	}
-	defer r.Body.Close()
-	body, _ := ioutil.ReadAll(r.Body)
-	mzk, _, _, _ := jsonparser.Get(body, "message", "body", "track_list")
-	var result []string
-	jsonparser.ArrayEach(mzk, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-		res, _, _, _ := jsonparser.Get(value, "track", "track_id")
-		result = append(result, string(res))
-	})
-	req_2, _ := http.NewRequest("GET", "https://api.musixmatch.com/ws/1.1/track.lyrics.get?track_id="+result[0]+"&apikey=6efc39fa2ad207c07d3d814749804a9b", nil)
-	r_2, err := c.Do(req_2)
-	if err != nil {
-		log.Println(err)
-	}
-	defer r_2.Body.Close()
-	body_2, _ := ioutil.ReadAll(r_2.Body)
-	ly, _, _, _ := jsonparser.Get(body_2, "message", "body", "lyrics", "lyrics_body")
-	_ly := string(ly)
-	_ly = strings.Replace(_ly, "******* This Lyrics is NOT for Commercial use *******", "", -1)
-	return _ly
-}
-
 func Ly3(q string) string {
 	url := "https://gsearch-prod-cloud.gaana.com/gaanasearch-api/mobilesuggest/autosuggest-lite-vltr-ro?geoLocation=IN&query=" + url.QueryEscape(q) + "&content_filter=2&include=allItems&isRegSrch=0&webVersion=mix&rType=web&usrLang=Hindi,English,Punjabi&isChrome=1"
 	resp, err := Aclient.Get(url)
@@ -302,3 +258,45 @@ func Ly3(q string) string {
 }
 
 // https://gaana.com/lyrics/coca-cola-38
+
+func StreamSrc(query string) []StreamS {
+	var data = strings.NewReader(`{"operationName":"GetSearchTitles","variables":{"searchTitlesSortBy":"POPULAR","first":5,"sortRandomSeed":0,"searchAfterCursor":"","searchTitlesFilter":{"searchQuery":"` + query + `","personId":null},"language":"en","country":"IN"},"query":"query GetSearchTitles($country: Country!, $searchTitlesFilter: TitleFilter, $searchAfterCursor: String, $searchTitlesSortBy: PopularTitlesSorting! = POPULAR, $first: Int! = 5, $language: Language!, $sortRandomSeed: Int! = 0, $profile: PosterProfile, $backdropProfile: BackdropProfile, $format: ImageFormat) {\n  popularTitles(\n    country: $country\n    filter: $searchTitlesFilter\n    after: $searchAfterCursor\n    sortBy: $searchTitlesSortBy\n    first: $first\n    sortRandomSeed: $sortRandomSeed\n  ) {\n    totalCount\n    pageInfo {\n      startCursor\n      endCursor\n      hasPreviousPage\n      hasNextPage\n      __typename\n    }\n    edges {\n      ...SearchTitleGraphql\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment SearchTitleGraphql on PopularTitlesEdge {\n  cursor\n  node {\n    id\n    objectId\n    objectType\n    content(country: $country, language: $language) {\n      title\n      fullPath\n      originalReleaseYear\n      scoring {\n        imdbScore\n        imdbVotes\n        tmdbScore\n        tmdbPopularity\n        __typename\n      }\n      posterUrl(profile: $profile, format: $format)\n      backdrops(profile: $backdropProfile, format: $format) {\n        backdropUrl\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n"}`)
+	req, _ := http.NewRequest("POST", "https://apis.justwatch.com/graphql", data)
+	req.Header.Set("Content-Type", "application/json")
+	r, err := c.Do(req)
+	if err != nil {
+		log.Println(err)
+	}
+	defer r.Body.Close()
+	body, _ := ioutil.ReadAll(r.Body)
+	var pid string
+	program_id, _, _, _ := jsonparser.Get(body, "data", "popularTitles", "edges", "[0]", "node", "content", "fullPath")
+	pid = string(program_id)
+	baseUrl := "https://www.justwatch.com" + pid
+	rs, err := c.Get(baseUrl)
+	if err != nil {
+		log.Println(err)
+	}
+	defer rs.Body.Close()
+	var src []StreamS
+	doc, _ := goquery.NewDocumentFromReader(rs.Body)
+	doc.Find("div").Each(func(i int, s *goquery.Selection) {
+		if s.HasClass("price-comparison--block") {
+			doc.Find("div").Each(func(i int, s *goquery.Selection) {
+				if s.HasClass("price-comparison__grid__row price-comparison__grid__row--stream") {
+					a := s.Find("a")
+					img := a.Find("img")
+					src = append(src, StreamS{img.AttrOr("alt", ""), strings.TrimSpace(s.Find("span").Text()), a.AttrOr("href", ""), "Stream", ""})
+				} else if s.HasClass("price-comparison__grid__row price-comparison__grid__row--rent") {
+					a := s.Find("a")
+					img := a.Find("img")
+					src = append(src, StreamS{img.AttrOr("alt", ""), strings.TrimSpace(s.Find("span").Text()), a.AttrOr("href", ""), "Rent", ""})
+				}
+				if s.HasClass("price-comparison__grid__row__price") {
+					src[len(src)-1].Price = s.Text()
+				}
+			})
+		}
+	})
+	return src
+}

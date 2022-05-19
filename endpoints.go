@@ -407,6 +407,23 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 // trackID + imgeURL fetch....
 // Lyrics API Boom
 
+func Stream(w http.ResponseWriter, r *http.Request) {
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
+		return
+	}
+	q := query.Get("q")
+	i := query.Get("i")
+	if q == "" {
+		http.Error(w, "missing query", http.StatusBadRequest)
+		return
+	}
+	d := StreamSrc(q)
+	WriteJson(w, r, d, i)
+}
+
 func init() {
 	http.HandleFunc("/tpb", Tpb)
 	http.HandleFunc("/google", Google)
@@ -417,4 +434,5 @@ func init() {
 	http.HandleFunc("/math", Math)
 	http.HandleFunc("/game", Games)
 	http.HandleFunc("/spotify", Spotify)
+	http.HandleFunc("/stream", Stream)
 }

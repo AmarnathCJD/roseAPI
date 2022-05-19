@@ -282,7 +282,7 @@ func StreamSrc(query string) []StreamS {
 	doc, _ := goquery.NewDocumentFromReader(rs.Body)
 	doc.Find("div").Each(func(i int, s *goquery.Selection) {
 		if s.HasClass("price-comparison--block") {
-			doc.Find("div").Each(func(i int, s *goquery.Selection) {
+			s.Find("div").Each(func(i int, s *goquery.Selection) {
 				if s.HasClass("price-comparison__grid__row price-comparison__grid__row--stream") {
 					a := s.Find("a")
 					img := a.Find("img")

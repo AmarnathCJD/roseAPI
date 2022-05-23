@@ -288,23 +288,10 @@ func StreamSrc(query string) []StreamS {
 	defer rs.Body.Close()
 	var src []StreamS
 	doc, _ := goquery.NewDocumentFromReader(rs.Body)
-	doc.Find("div").Each(func(i int, s *goquery.Selection) {
-		if s.HasClass("price-comparison--block") {
-			doc.Find("div").Each(func(i int, s *goquery.Selection) {
-				if s.HasClass("price-comparison__grid__row price-comparison__grid__row--stream") {
-					a := s.Find("a")
-					img := a.Find("img")
-					src = append(src, StreamS{img.AttrOr("alt", ""), strings.TrimSpace(s.Find("span").Text()), a.AttrOr("href", ""), "Stream", ""})
-				} else if s.HasClass("price-comparison__grid__row price-comparison__grid__row--rent") {
-					a := s.Find("a")
-					img := a.Find("img")
-					src = append(src, StreamS{img.AttrOr("alt", ""), strings.TrimSpace(s.Find("span").Text()), a.AttrOr("href", ""), "Rent", ""})
-				}
-				if s.HasClass("price-comparison__grid__row__price") {
-					src[len(src)-1].Price = s.Text()
-				}
-			})
-		}
+	doc.Find(".price-comparison__grid__row__element").Each(func(i int, s *goquery.Selection) {
+		a := s.Find("a")
+		img := a.Find("img")
+		src = append(src, StreamS{img.AttrOr("alt", ""), strings.TrimSpace(s.Find("span").Text()), a.AttrOr("href", ""), "Stream", strings.TrimSpace(s.Find(".price-comparison__grid__row__price").Text())})
 	})
 	return src
 }

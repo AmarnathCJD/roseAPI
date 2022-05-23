@@ -99,6 +99,14 @@ func EncodeJson(v interface{}) string {
 	return b.String()
 }
 
+func _UnescapeUnicodeCharactersInJSON(_jsonRaw json.RawMessage) json.RawMessage {
+	str, err := strconv.Unquote(strings.Replace(strconv.Quote(string(_jsonRaw)), `\\u`, `\u`, -1))
+	if err != nil {
+		return nil
+	}
+	return []byte(str)
+}
+
 func ParseYoutubeRAW(raw string) []byte {
 	by := []byte(raw)
 	var Results []YoutubeResult
@@ -299,4 +307,10 @@ func StreamSrc(query string) []StreamS {
 		}
 	})
 	return src
+}
+
+func WriteError(msg string, w http.ResponseWriter) {
+	w.WriteHeader(http.StatusBadRequest)
+	_d := []byte(`{"error":"` + msg + `", "status":400}`)
+	w.Write(_d)
 }

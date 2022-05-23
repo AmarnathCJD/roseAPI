@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -424,10 +425,47 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 	WriteJson(w, r, EncodeJson(d), i)
 }
 
+func YoutubeStream(w http.ResponseWriter, r *http.Request) {
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["youtube/stream"], "{}", r.URL.Hostname())))
+		return
+	}
+	id := query.Get("id")
+	i := query.Get("i")
+	if id == "" {
+		WriteError("missing id", w)
+		return
+	}
+	vid_url := "https://www.youtube.com/watch?v=" + id
+	var data = strings.NewReader(`{"url":"` + vid_url + `"}`)
+	req, _ := http.NewRequest("POST", "https://api.onlinevideoconverter.pro/api/convert", data)
+	req.Header.Set("sec-fetch-site", "same-site")
+	log.Println(req.Header)
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := c.Do(req)
+	if !ERR(err, w) {
+		return
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if !ERR(err, w) {
+		return
+	}
+	WriteJson(w, r, string(_UnescapeUnicodeCharactersInJSON(body)), i)
+}
+
+func HomePage(w http.ResponseWriter, r *http.Request) {
+	template := template.Must(template.ParseFiles("index.html"))
+	template.Execute(w, nil)
+}
+
 func init() {
 	http.HandleFunc("/tpb", Tpb)
 	http.HandleFunc("/google", Google)
 	http.HandleFunc("/youtube", Youtube)
+	http.HandleFunc("/youtube/stream", YoutubeStream)
 	http.HandleFunc("/imdb", ImDB)
 	http.HandleFunc("/chatbot", ChatBot)
 	http.HandleFunc("/lyrics", LyricsA)
@@ -435,4 +473,5 @@ func init() {
 	http.HandleFunc("/game", Games)
 	http.HandleFunc("/spotify", Spotify)
 	http.HandleFunc("/stream", Stream)
+	http.HandleFunc("/", HomePage)
 }

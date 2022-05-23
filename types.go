@@ -124,9 +124,91 @@ type StreamS struct {
 }
 
 var _help_ = map[string]string{
-	"google":  `Search Google.` + "\n" + `Usage: {}/google?q=<query>` + "\n" + `Example: {}/google?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Google Result]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
-	"tpb":     `Search The Pirate Bay.` + "\n" + `Usage: {}/tpb?q=<query>` + "\n" + `Example: {}/tpb?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Torrents]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
-	"imdb":    `Search IMDB.` + "\n" + `Usage: {}/imdb?q=<query>` + "\n" + `Example: /imdb?q=Avengers, {}/imdb?id=tt10191320` + "\n" + `Returns:` + "\n" + `    [Array of ImDB Titles or ImDB Single Result]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    id: The IMDB ID. (optional)` + "\n" + `    i: Indentaion (Bool, optional).`,
-	"youtube": `Search YouTube.` + "\n" + `Usage: {}/youtube?q=<query>` + "\n" + `Example: {}/youtube?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Youtube Videos]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
-	"chatbot": `Talk to the Kuki chatbot.` + "\n" + `Usage: {}/chatbot?message=<query>` + "\n" + `Example: {}/chatbot?message=Hello` + "\n" + `Returns:` + "\n" + `    {"message":"response"}` + "\n" + `If internal server error, 502 is returned.` + "\n" + `Parameters:` + "\n" + `    message: The message query.`,
+	"google":         `Search Google.` + "\n" + `Usage: {}/google?q=<query>` + "\n" + `Example: {}/google?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Google Result]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
+	"tpb":            `Search The Pirate Bay.` + "\n" + `Usage: {}/tpb?q=<query>` + "\n" + `Example: {}/tpb?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Torrents]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
+	"imdb":           `Search IMDB.` + "\n" + `Usage: {}/imdb?q=<query>` + "\n" + `Example: /imdb?q=Avengers, {}/imdb?id=tt10191320` + "\n" + `Returns:` + "\n" + `    [Array of ImDB Titles or ImDB Single Result]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    id: The IMDB ID. (optional)` + "\n" + `    i: Indentaion (Bool, optional).`,
+	"youtube":        `Search YouTube.` + "\n" + `Usage: {}/youtube?q=<query>` + "\n" + `Example: {}/youtube?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Youtube Videos]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
+	"chatbot":        `Talk to the Kuki chatbot.` + "\n" + `Usage: {}/chatbot?message=<query>` + "\n" + `Example: {}/chatbot?message=Hello` + "\n" + `Returns:` + "\n" + `    {"message":"response"}` + "\n" + `If internal server error, 502 is returned.` + "\n" + `Parameters:` + "\n" + `    message: The message query.`,
+	"spotify":        `Search Spotify.` + "\n" + `Usage: {}/spotify?q=<query>` + "\n" + `Example: {}/spotify?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Spotify Results]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
+	"lyrics":         `Search Lyrics.` + "\n" + `Usage: {}/lyrics?q=<query>` + "\n" + `Example: {}/lyrics?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Lyrics Results]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
+	"stream":         `Search Stream.` + "\n" + `Usage: {}/stream?q=<query>` + "\n" + `Example: {}/stream?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Stream Results]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
+	"youtube/stream": `Get stream url for youtube Vids.` + "\n" + `Usage: {}/youtube/stream?id=<vid_id>` + "\n" + `Example: {}/youtube/stream?id=8FAUEv_E_xQ` + "\n" + `Returns:` + "\n" + `    [Array of Stream URLS with Avaliable Qualities]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    id: The Vid ID.` + "\n" + `    i: Indentaion (Bool, optional).`,
 }
+
+var HOME_PAGE = `
+<!DOCTYPE html>
+<html>
+<head>
+<title>roseAPI</title>
+<style>
+body {
+	background-color: #f0f0f0;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #333;
+	margin: 0;
+	padding: 0;
+}
+.endpoint {
+	background-color: #fff;
+	border-radius: 4px;
+	border: 1px solid #ddd;
+	padding: 10px;
+	margin: 10px;
+}
+.endpoint h3 {
+	margin: 0;
+	padding: 0;
+}
+.endpoint method {
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+}
+</style>
+</head>
+<body>
+<h1>roseAPI</h1>
+<p>
+	roseAPI is a RESTful API for the Rose project.
+</p>
+<p>
+	roseAPI is currently in beta.
+</p>
+<p>
+	API Endpoints:
+</p>
+<div class="endpoint">
+	<h3>/chatbot</h3>
+	<p>
+		<span class="method">POST</span>
+		<span class="path">/chatbot</span>
+	</p>
+	<p>
+		<span class="description">
+			Talk to the Kuki chatbot.
+		</span>
+	</p>
+	<p>
+		<span class="parameter">
+			message
+		</span>
+		<span class="description">
+			The message query.
+		</span>
+	</p>
+	<p>
+		<span class="return">
+			{"message":"response"}
+		</span>
+	</p>
+	<p>
+		<span class="error">
+			502
+		</span>
+	</p>
+</div>
+</body>
+</html>
+`

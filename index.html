@@ -446,7 +446,7 @@
           data = help_data[id];
           hostname = window.location.hostname;
           port = window.location.port;
-          if (port != "80" || port != "") {
+          if (port != "80" && port != "") {
             hostname = hostname + ":" + port;
           }
           url = "http://" + hostname + data.url;

@@ -11,7 +11,7 @@ import (
 	"strings"
 	"text/template"
 	"time"
-
+        b64 "encoding/base64"
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -510,7 +510,8 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
-	WriteJson(w, r, string([]byte(`{"image":"`+string(body)+`"}`)), i)
+        sEnc := b64.StdEncoding.EncodeToString(body)
+	WriteJson(w, r, string([]byte(`{"image":"`+sEnc+`"}`)), i)
 }
 
 func init() {

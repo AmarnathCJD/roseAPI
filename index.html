@@ -18,17 +18,17 @@
       <nav class="navbar navbar-expand-lg navbar-light" id="main-nav">
         <div class="container-fluid">
           <a class="navbar-brand" href="index.html">
-            <h3>
+            <h2>
               <img
                 src="https://img.icons8.com/external-vitaliy-gorbachev-blue-vitaly-gorbachev/60/000000/external-rose-japanese-wedding-vitaliy-gorbachev-blue-vitaly-gorbachev.png"
                 width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy" />
               roseAPI
-            </h3>
+            </h2>
           </a>
           <div class="nav-link">
             <ul class="nav nav-pills">
               <li class="nav-item">
-                <a class="nav-link active" href="index.html">Home</a>
+                <a class="nav-link active" href="/">Home</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">About</a>
@@ -64,15 +64,15 @@
               <div class="card-body">
                 <h5 class="card-title mb-1">
                   <i class="fas fa-user-friends"></i>
-                  <b><img src="https://img.icons8.com/nolan/64/utorrent.png" height="52px" /> PirateBay Search <span class="badge rounded-pill bg-success">GET</span></b>
+                  <b><img src="https://img.icons8.com/nolan/64/utorrent.png" height="52px" /> PirateBay Search <span
+                      class="badge rounded-pill bg-success">GET</span></b>
                 </h5>
                 <p class="card-text">
                   Search Torrent from PirateBay<br>
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href='/tpb'"
-                      >
+                    <button type="button" class="btn btn-sm btn-primary btn-sm" onclick="showModal(this)" data-id="tpb">
                       View
                     </button>
                   </div>
@@ -85,15 +85,15 @@
               <div class="card-body">
                 <h5 class="card-title">
                   <i class="fas fa-user-friends"></i>
-                  <b><img src="https://img.icons8.com/color/48/000000/google-logo.png" /> Google Search <span class="badge rounded-pill bg-success">GET</span></b>
+                  <b><img src="https://img.icons8.com/color/48/000000/google-logo.png" /> Google Search <span
+                      class="badge rounded-pill bg-success">GET</span></b>
                 </h5>
                 <p class="card-text">
                   Google Search API<br>
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href='/google'"
-                      >
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showModal(this)" data-id="google">
                       View
                     </button>
                   </div>
@@ -106,15 +106,15 @@
               <div class="card-body">
                 <h5 class="card-title">
                   <i class="fas fa-user-friends"></i>
-                  <b><img src="https://img.icons8.com/color/48/000000/youtube-play.png" /> Youtube <span class="badge rounded-pill bg-success">GET</span></b>
+                  <b><img src="https://img.icons8.com/color/48/000000/youtube-play.png" /> Youtube <span
+                      class="badge rounded-pill bg-success">GET</span></b>
                 </h5>
                 <p class="card-text">
                   Youtube Search API<br>
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href='/youtube'"
-                      >
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showModal(this)" data-id="youtube">
                       View
                     </button>
                   </div>
@@ -127,15 +127,16 @@
               <div class="card-body">
                 <h5 class="card-title">
                   <i class="fas fa-user-friends"></i>
-                  <b><img src="https://img.icons8.com/fluency/48/000000/video-trimming.png" /> Youtube Stream <span class="badge rounded-pill bg-success">GET</span></b>
+                  <b><img src="https://img.icons8.com/fluency/48/000000/video-trimming.png" /> Youtube Stream <span
+                      class="badge rounded-pill bg-success">GET</span></b>
                 </h5>
                 <p class="card-text">
                   Get Youtube Video StreamLink<br>
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href='/stream/youtube'"
-                      >
+                    <button type="button" class="btn btn-sm btn-primary"
+                    onclick="showModal(this)" data-id="/youtube/stream">
                       View
                     </button>
                   </div>
@@ -148,15 +149,15 @@
               <div class="card-body">
                 <h5 class="card-title">
                   <i class="fas fa-user-friends"></i>
-                  <b><img src="https://img.icons8.com/color/48/000000/imdb.png" /> ImDB <span class="badge rounded-pill bg-success">GET</span></b>
+                  <b><img src="https://img.icons8.com/color/48/000000/imdb.png" /> ImDB <span
+                      class="badge rounded-pill bg-success">GET</span></b>
                 </h5>
                 <p class="card-text">
                   Get Latest Movie Ttitle details from ImDB.<br>
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href='/imdb'"
-                      >
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showModal(this)" data-id="imdb">
                       View
                     </button>
                   </div>
@@ -170,7 +171,8 @@
                 <h5 class="card-title">
                   <i class="fas fa-user-friends"></i>
                   <b><img
-                      src="https://img.icons8.com/external-sbts2018-flat-sbts2018/58/000000/external-chatbot-basic-ui-elements-2.4-sbts2018-flat-sbts2018.png" height="48px" />
+                      src="https://img.icons8.com/external-sbts2018-flat-sbts2018/58/000000/external-chatbot-basic-ui-elements-2.4-sbts2018-flat-sbts2018.png"
+                      height="48px" />
                     ChatBot <span class="badge rounded-pill bg-success">GET</span></b>
                 </h5>
                 <p class="card-text">
@@ -178,8 +180,7 @@
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href='/chatbot'"
-                      >
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showModal(this)" data-id="chatbot">
                       View
                     </button>
                   </div>
@@ -192,15 +193,15 @@
               <div class="card-body">
                 <h5 class="card-title">
                   <i class="fas fa-user-friends"></i>
-                  <b><img src="https://img.icons8.com/fluency/48/000000/apple-music-lyrics.png" /> Lyrics <span class="badge rounded-pill bg-success">GET</span></b>
+                  <b><img src="https://img.icons8.com/fluency/48/000000/apple-music-lyrics.png" /> Lyrics <span
+                      class="badge rounded-pill bg-success">GET</span></b>
                 </h5>
                 <p class="card-text">
                   Fetch Lyrics of any Song.<br>
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href='/lyrics'"
-                      >
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showModal(this)" data-id="lyrics">
                       View
                     </button>
                   </div>
@@ -214,7 +215,8 @@
                 <h5 class="card-title">
                   <i class="fas fa-user-friends"></i>
                   <b><img
-                      src="https://img.icons8.com/external-inipagistudio-lineal-color-inipagistudio/64/000000/external-math-student-club-inipagistudio-lineal-color-inipagistudio.png" height="48px" />
+                      src="https://img.icons8.com/external-inipagistudio-lineal-color-inipagistudio/64/000000/external-math-student-club-inipagistudio-lineal-color-inipagistudio.png"
+                      height="48px" />
                     Math <span class="badge rounded-pill bg-success">GET</span></b>
                 </h5>
                 <p class="card-text">
@@ -222,8 +224,7 @@
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href='/math'"
-                      >
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showModal(this)" data-id="math">
                       View
                     </button>
                   </div>
@@ -244,8 +245,7 @@
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href='/games'"
-                      >
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showModal(this)" data-id="game">
                       View
                     </button>
                   </div>
@@ -258,15 +258,15 @@
               <div class="card-body">
                 <h5 class="card-title">
                   <i class="fas fa-user-friends"></i>
-                  <b><img src="https://img.icons8.com/color/48/000000/spotify--v1.png" height="48px" /> Spotify <span class="badge rounded-pill bg-success">GET</span></b>
+                  <b><img src="https://img.icons8.com/color/48/000000/spotify--v1.png" height="48px" /> Spotify <span
+                      class="badge rounded-pill bg-success">GET</span></b>
                 </h5>
                 <p class="card-text">
                   Search spotify for songs<br>
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href='/spotify'"
-                      >
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showModal(this)" data-id="spotify">
                       View
                     </button>
                   </div>
@@ -279,20 +279,37 @@
               <div class="card-body">
                 <h5 class="card-title">
                   <i class="fas fa-user-friends"></i>
-                  <b><img src="https://img.icons8.com/ios-filled/50/000000/amazon-prime-video.png" height="48px" /> Stream <span class="badge rounded-pill bg-success">GET</span></b>
+                  <b><img src="https://img.icons8.com/ios-filled/50/000000/amazon-prime-video.png" height="48px" />
+                    Stream <span class="badge rounded-pill bg-success">GET</span></b>
                 </h5>
                 <p class="card-text">
                   Get OTT Sites of Given Movie<br>
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="window.location.href='/stream'"
-                      >
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showModal(this)" data-id="stream">
                       View
                     </button>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="ModalLongTitle"></h5>
+            </div>
+            <div class="modal-body" id="mBody">
+              ...
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"
+                id="model-close">Close</button>
             </div>
           </div>
         </div>
@@ -301,10 +318,200 @@
         <div class="card-body text-center">
           <blockquote class="blockquote mb-0">
             <p>roseAPI</p>
-            <footer class="blockquote-footer">COpyRIght 2022- <cite title="Source Title">@RoseLoverX</cite></footer>
+            <footer class="blockquote-footer">CopyRight 2022- <cite title="Source Title">@RoseLoverX</cite></footer>
           </blockquote>
         </div>
       </div>
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+      <script type="text/javascript">
+        document.getElementById("model-close").onclick = function () {
+          $('#ModalCenter').modal('hide');
+        };
+        var help_data = {
+          "tpb": {
+            "url": "/tpb?q=",
+            "name": "Tpb",
+            "desc": "The Pirate Bay",
+            "method": "GET",
+            "params": {
+              "q": "Query",
+            }
+          },
+          "math": {
+            "url": "/math",
+            "name": "Math",
+            "desc": "Math Genius API",
+            "method": "GET",
+            "params": {
+              "q": "Query",
+            }
+          },
+          "games": {
+            "url": "/games",
+            "name": "Games",
+            "desc": "Cracked PC games (Triple AAA)",
+            "method": "GET",
+            "params": {
+              "q": "Query",
+            }
+          },
+          "spotify": {
+            "url": "/spotify?q=",
+            "name": "Spotify",
+            "desc": "Spotify Music Search",
+            "method": "GET",
+            "params": {
+              "q": "Query"
+            }
+          },
+          "stream": {
+            "url": "/stream?q=",
+            "name": "Stream",
+            "desc": "Streaming Sites of Given Movie",
+            "method": "GET",
+            "params": {
+              "q": "Query"
+            }
+          },
+          "youtube": {
+            "url": "/youtube?q=",
+            "name": "Youtube",
+            "desc": "Youtube Search",
+            "method": "GET",
+            "params": {
+              "q": "Query"
+            }
+          },
+          "google": {
+            "url": "/google?q=",
+            "name": "Google",
+            "desc": "Google Search",
+            "method": "GET",
+            "params": {
+              "q": "Query"
+            }
+          },
+          "wiki": {
+            "url": "/wiki?q=",
+            "name": "Wiki",
+            "desc": "Wikipedia Search",
+            "method": "GET",
+            "params": {
+              "q": "Query"
+            }
+          },
+          "imdb": {
+            "url": "/imdb?q=",
+            "name": "IMDB",
+            "desc": "IMDB Search",
+            "method": "GET",
+            "params": {
+              "q": "Query"
+            }
+          },
+          "chatbot": {
+            "url": "/chatbot?q=",
+            "name": "Chatbot",
+            "desc": "Chatbot",
+            "method": "GET",
+            "params": {
+              "message": "Message"
+            }
+          },
+          "/youtube/stream": {
+            "url": "/youtube/stream?q=",
+            "name": "Youtube Stream",
+            "desc": "Youtube Stream",
+            "method": "GET",
+            "params": {
+              "q": "Query"
+            }
+          },
+          "lyrics": {
+            "url": "/lyrics?q=",
+            "name": "Lyrics",
+            "desc": "Lyrics",
+            "method": "GET",
+            "params": {
+              "q": "Query"
+            }
+          },
+        }
+        function showModal(e) {
+          id = e.getAttribute("data-id");
+          modal_body = document.getElementById("mBody");
+          title = document.getElementById("ModalLongTitle");
+          data = help_data[id];
+          hostname = window.location.hostname;
+          port = window.location.port;
+          if (port != "80") {
+            hostname = hostname + ":" + port;
+          }
+          url = "http://" + hostname + data.url;
+          title.innerHTML = `<h5 class="card-title">${data.name} (${data.desc})</h5>`;
+          modal_body.innerHTML = `
+           <div class="h-100 p-5 bg-light border rounded-3">
+              <p>API Playground</p>
+              <div class="input-group mb-3">
+               <span class="input-group-text" id="basic-addon3">${url}</span>
+               <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+                <div class="input-group-append">
+                 <button class="btn btn-outline-secondary" type="button" onclick='copyToClipboard(this)' data-url='${url}'>Copy</button>
+                </div>
+              </div>
+              <select class="form-control" id="method">
+                  <option value="GET">GET</option>
+                  <option value="POST">POST</option>
+                  <option value="PUT">PUT</option>
+                  <option value="DELETE">DELETE</option>
+              </select>
+               <button type="button" class="btn btn-primary btn-sm"
+                   style="margin-top: 12px; margin-bottom:12px;" onclick='sendReq(this)' data-url='${url}'>Request</button>
+              <div class="card" style="width: 18rem;">
+               <div class="card-body">
+                <p class="card-text" id="params"></p>
+              </div>
+             </div>
+            </div>`;
+          $('#ModalCenter').modal('show');
+        }
+        function copyToClipboard(e) {
+          var copyText = $(e).data("url");
+          var basic_url = document.getElementById("basic-url");
+          copyText += basic_url.value;
+          navigator.clipboard.writeText(copyText).then(
+            function () {
+              alert("Copied to clipboard");
+            },
+            function () {
+              alert("Failed to copy");
+            }
+          );
+        }
+        function sendReq(e) {
+          var input = document.getElementById("basic-url");
+          var url = $(e).data("url");
+          url += input.value;
+          var method = document.getElementById("method").value;
+          var xhr = new XMLHttpRequest();
+          xhr.open(method, url, true);
+          xhr.onload = function () {
+            if (this.status == 200) {
+              var res = JSON.parse(this.response);
+              var res_body = document.getElementById("params");
+              res_body.innerText = JSON.stringify(res, null, 2);
+              res_body.style.display = "block";
+            } else {
+              var res_body = document.getElementById("params");
+              res_body.innerText = this.response
+              res_body.style.display = "block";
+            }
+          };
+          xhr.send();
+        }
+      </script>
 </body>
 
 </html>

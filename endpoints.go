@@ -504,9 +504,13 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
         BASEURL := fmt.Sprintf("https://webshot.deam.io/%s?type=jpeg&quality=100&fullPage=true&height=540&width=960", url.QueryEscape(_url))
-        resp, _ := c.Get(BASEURL)
-        IMBytes, _ := ioutil.ReadAll(resp)
-        WriteJson(w, r, string([]bytes(`{"image":"` + string(IMBytes) + `"}`)), i)
+        resp, err := c.Get(BASEURL)
+        if !ERR(err, w) {
+		return
+	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+        WriteJson(w, r, string([]bytes(`{"image":"` + string(body) + `"}`)), i)
 }
 
 func init() {

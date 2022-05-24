@@ -510,7 +510,7 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
-        WriteJson(w, r, string([]bytes(`{"image":"` + string(body) + `"}`)), i)
+        WriteJson(w, r, string([]byte(`{"image":"` + string(body) + `"}`)), i)
 }
 
 func init() {

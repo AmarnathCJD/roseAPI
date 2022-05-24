@@ -473,7 +473,7 @@ func LinkPreview(w http.ResponseWriter, r *http.Request) {
 	_url := query.Get("url")
 	i := query.Get("i")
 	if _url == "" {
-		http.Error(w, "missing query", http.StatusBadRequest)
+		http.Error(w, "missing url", http.StatusBadRequest)
 		return
 	}
 	req, _ := http.NewRequest("GET", "https://api.labs.cognitive.microsoft.com/urlpreview/v7.0/search"+"?q="+url.QueryEscape(_url), nil)
@@ -485,6 +485,28 @@ func LinkPreview(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	WriteJson(w, r, string(body), i)
+}
+
+func ScreenShot(w http.ResponseWriter, r *http.Request) {
+	if !blockWrongMethod(w, r, "GET") {
+		return
+	}
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
+		return
+	}
+	_url := query.Get("url")
+	i := query.Get("i")
+	if _url == "" {
+		http.Error(w, "missing url", http.StatusBadRequest)
+		return
+	}
+        BASEURL := fmt.Sprintf("https://webshot.deam.io/%s?type=jpeg&quality=100&fullPage=true&height=540&width=960", url.QueryEscape(_url))
+        resp, _ := c.Get(BASEURL)
+        IMBytes, _ := ioutil.ReadAll(resp)
+        WriteJson(w, r, string([]bytes(`{"image":"` + string(IMBytes) + `"}`)), i)
 }
 
 func init() {
@@ -500,5 +522,6 @@ func init() {
 	http.HandleFunc("/spotify", Spotify)
 	http.HandleFunc("/stream", Stream)
 	http.HandleFunc("/urlpreview", LinkPreview)
+        http.HandleFunc("/screenshot", ScreenShot)
 	http.HandleFunc("/", HomePage)
 }

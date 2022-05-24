@@ -1,8 +1,10 @@
 package main
 
 import (
+	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,8 +13,6 @@ import (
 	"strings"
 	"text/template"
 	"time"
-        b64 "encoding/base64"
-	"github.com/PuerkitoBio/goquery"
 )
 
 var (
@@ -510,7 +510,7 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
-        sEnc := b64.StdEncoding.EncodeToString(body)
+	sEnc := b64.StdEncoding.EncodeToString(body)
 	WriteJson(w, r, string([]byte(`{"image":"`+sEnc+`"}`)), i)
 }
 

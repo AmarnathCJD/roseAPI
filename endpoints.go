@@ -503,14 +503,14 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "missing url", http.StatusBadRequest)
 		return
 	}
-        BASEURL := fmt.Sprintf("https://webshot.deam.io/%s?type=jpeg&quality=100&fullPage=true&height=540&width=960", url.QueryEscape(_url))
-        resp, err := c.Get(BASEURL)
-        if !ERR(err, w) {
+	BASEURL := fmt.Sprintf("https://webshot.deam.io/%s?type=jpeg&quality=100&fullPage=true&height=540&width=960", url.QueryEscape(_url))
+	resp, err := c.Get(BASEURL)
+	if !ERR(err, w) {
 		return
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
-        WriteJson(w, r, string([]byte(`{"image":"` + string(body) + `"}`)), i)
+	WriteJson(w, r, string([]byte(`{"image":"`+string(body)+`"}`)), i)
 }
 
 func init() {
@@ -526,6 +526,6 @@ func init() {
 	http.HandleFunc("/spotify", Spotify)
 	http.HandleFunc("/stream", Stream)
 	http.HandleFunc("/urlpreview", LinkPreview)
-        http.HandleFunc("/screenshot", ScreenShot)
+	http.HandleFunc("/screenshot", ScreenShot)
 	http.HandleFunc("/", HomePage)
 }

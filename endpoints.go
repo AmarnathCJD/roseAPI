@@ -478,8 +478,12 @@ if !blockWrongMethod(w, r, "GET") {
 	}
 req, _ := http.NewRequest("GET", "https://api.labs.cognitive.microsoft.com/urlpreview/v7.0/search" + "?q=" + url.QueryEscape(_url), nil)
 req.Header.Set("Ocp-Apim-Subscription-Key", "27b02a2c7d394388a719e0fdad6edb10")
-resp, _ := c.Do(req)
-body, _ := ioutil.ReadAll(resp)
+resp, err := c.Do(req)
+if !ERR(err, w) {
+return
+}
+defer resp.Body.Close()
+body, _ := ioutil.ReadAll(resp.Body)
 WriteJson(w, r, string(body), i)
 }
 

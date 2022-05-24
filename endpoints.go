@@ -442,7 +442,6 @@ func YoutubeStream(w http.ResponseWriter, r *http.Request) {
 	var data = strings.NewReader(`{"url":"` + vid_url + `"}`)
 	req, _ := http.NewRequest("POST", "https://api.onlinevideoconverter.pro/api/convert", data)
 	req.Header.Set("sec-fetch-site", "same-site")
-	log.Println(req.Header)
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := c.Do(req)
 	if !ERR(err, w) {
@@ -479,8 +478,8 @@ if !blockWrongMethod(w, r, "GET") {
 	}
 req, _ := http.NewRequest("GET", "https://api.labs.cognitive.microsoft.com/urlpreview/v7.0/search" + "?q=" + url.QueryEscape(_url), nil)
 req.Header.Set("Ocp-Apim-Subscription-Key", "27b02a2c7d394388a719e0fdad6edb10")
-r, _ := c.Do(req)
-body, _ := ioutil.ReadAll(r)
+resp, _ := c.Do(req)
+body, _ := ioutil.ReadAll(resp)
 WriteJson(w, r, string(body), i)
 }
 

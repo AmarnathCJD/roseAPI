@@ -471,13 +471,13 @@ if !blockWrongMethod(w, r, "GET") {
 		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
 		return
 	}
-	url := query.Get("url")
+	_url := query.Get("url")
 	i := query.Get("i")
-	if url == "" {
+	if _url == "" {
 		http.Error(w, "missing query", http.StatusBadRequest)
 		return
 	}
-req, _ := http.NewRequest("GET", "https://api.labs.cognitive.microsoft.com/urlpreview/v7.0/search" + "?q=" + url.QueryEscape(url), nil)
+req, _ := http.NewRequest("GET", "https://api.labs.cognitive.microsoft.com/urlpreview/v7.0/search" + "?q=" + url.QueryEscape(_url), nil)
 req.Header.Set("Ocp-Apim-Subscription-Key", "27b02a2c7d394388a719e0fdad6edb10")
 r, _ := c.Do(req)
 body, _ := ioutil.ReadAll(r)

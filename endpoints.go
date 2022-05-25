@@ -504,7 +504,7 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "missing url", http.StatusBadRequest)
 		return
 	}
-	BASEURL := fmt.Sprintf("https://webshot.deam.io/%s?type=jpeg&quality=100&fullPage=true&height=540&width=960", _url)
+	BASEURL := fmt.Sprintf("https://webshot.deam.io/%s?type=jpeg&quality=100&fullPage=false&height=540&width=960", _url)
 	resp, err := c.Get(BASEURL)
 	if !ERR(err, w) {
 		return

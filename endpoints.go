@@ -513,7 +513,7 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(resp.Body)
 	if image == "true" {
 		w.Header().Set("Content-Type", "image/png")
-                w.Write(body)
+		w.Write(body)
 		return
 	}
 	sEnc := b64.StdEncoding.EncodeToString(body)

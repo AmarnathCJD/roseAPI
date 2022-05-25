@@ -499,7 +499,7 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 	}
 	_url := query.Get("url")
 	i := query.Get("i")
-	image = query.Get("image")
+	image := query.Get("image")
 	if _url == "" {
 		http.Error(w, "missing url", http.StatusBadRequest)
 		return

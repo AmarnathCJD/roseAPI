@@ -499,6 +499,7 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 	}
 	_url := query.Get("url")
 	i := query.Get("i")
+	image = query.Get("image")
 	if _url == "" {
 		http.Error(w, "missing url", http.StatusBadRequest)
 		return
@@ -510,6 +511,11 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
+	if image == "true" {
+		w.Header().Set("Content-Type", "image/png")
+                w.Write(body)
+		return
+	}
 	sEnc := b64.StdEncoding.EncodeToString(body)
 	WriteJson(w, r, string([]byte(`{"image":"`+sEnc+`"}`)), i)
 }

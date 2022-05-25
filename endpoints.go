@@ -511,6 +511,10 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
+	if strings.Contains(string(body), "<h5>") {
+		WriteJson(w, r, string([]byte(`{"error":"`+string(body)+`"}`)), i)
+		return
+	}
 	if image == "true" {
 		w.Header().Set("Content-Type", "image/png")
 		w.Write(body)

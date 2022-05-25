@@ -511,7 +511,7 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
-	if strings.Contains(string(body), "<h5>") {
+	if strings.Contains(string(body), "<h") {
 		WriteJson(w, r, string([]byte(`{"error":"`+string(body)+`"}`)), i)
 		return
 	}

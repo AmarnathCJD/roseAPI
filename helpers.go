@@ -304,20 +304,27 @@ func WriteError(msg string, w http.ResponseWriter) {
 }
 
 func newfileUploadRequest(uri string, params map[string]string, paramName string, fileContents []byte, headers map[string]string) *http.Request {
-	body := new(bytes.Buffer)
-	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile(paramName, "file.jpg")
-	io.Copy(part, fileContents)
-	for key, val := range params {
-		_ = writer.WriteField(key, val)
-	}
-	err = writer.Close()
-	if err != nil {
-		return nil
-	}
-	req, _ := http.NewRequest("POST", uri, body)
-	for a, b := range headers {
-		req.Header.Add(a, b)
-	}
-	return req
+	pipeReader, pipeWriter := io.Pipe()
+        writer := multipart.NewWriter(pipeWriter)
+        go func() {
+		defer pipeWriter.Close()
+		part, _ := writer.CreateFormFile(paramName, "file.jpg")
+                io.Copy(part, reader)
+
+		for field, value := range params {
+			if err := writer.WriteField(field, value); err != nil {
+				pipeWriter.CloseWithError(err)
+				return
+			}
+		}
+		if err := writer.Close(); err != nil {
+			pipeWriter.CloseWithError(err)
+			return
+		}
+	}()
+        req, _ := http.NewRequest("POST", uri, pipeReader)
+        for field, value := range headers {
+req.Header.Add(field, value)
+}
+return req
 }

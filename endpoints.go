@@ -524,6 +524,32 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 	WriteJson(w, r, string([]byte(`{"image":"`+sEnc+`"}`)), i)
 }
 
+func OCR(w http.ResponseWriter, r *http.Request) {
+	if !blockWrongMethod(w, r, "GET") {
+		return
+	}
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
+		return
+	}
+	r.ParseMultipartForm(32 << 20)
+        file, handler, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+        b, _ := ioutil.ReadAll(file)
+        HEADERS := map[string]string{
+"X-Api-Key": "IQcdz030YPMT3zSRrhHzRQ==sNdD9akTySL4WcpS"
+}
+        req := newfileUploadRequest("https://api.api-ninjas.com/v1/imagetotext", map[string]string{}, "image", b, HEADERS)
+        resp, _ := c.Do(req)
+        bd, _ := ioutil.ReadAll(resp.Body)
+        w.Write(string(bd))
+}
+
 func init() {
 	http.HandleFunc("/tpb", Tpb)
 	http.HandleFunc("/google", Google)

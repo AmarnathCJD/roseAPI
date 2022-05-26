@@ -525,7 +525,7 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 }
 
 func OCR(w http.ResponseWriter, r *http.Request) {
-	if !blockWrongMethod(w, r, "GET") {
+	if !blockWrongMethod(w, r, "POST") {
 		return
 	}
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
@@ -535,9 +535,9 @@ func OCR(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	r.ParseMultipartForm(32 << 20)
-	file, handler, err := r.FormFile("file")
+	file, _, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, err.Error()+fmt.Sprint(handler), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	b, _ := ioutil.ReadAll(file)

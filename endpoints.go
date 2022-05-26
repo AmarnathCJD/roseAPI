@@ -535,20 +535,20 @@ func OCR(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	r.ParseMultipartForm(32 << 20)
-        file, handler, err := r.FormFile("file")
+	file, handler, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, err.Error() + fmt.Sprint(handler), http.StatusInternalServerError)
+		http.Error(w, err.Error()+fmt.Sprint(handler), http.StatusInternalServerError)
 		return
 	}
-        b, _ := ioutil.ReadAll(file)
-        HEADERS := map[string]string{
-"X-Api-Key": "IQcdz030YPMT3zSRrhHzRQ==sNdD9akTySL4WcpS",
-}
-        req := newfileUploadRequest("https://api.api-ninjas.com/v1/imagetotext", map[string]string{}, "image", b, HEADERS)
-        resp, _ := c.Do(req)
-        bd, _ := ioutil.ReadAll(resp.Body)
-        w.Write(bd)
-        w.Write([]byte("oki"))
+	b, _ := ioutil.ReadAll(file)
+	HEADERS := map[string]string{
+		"X-Api-Key": "IQcdz030YPMT3zSRrhHzRQ==sNdD9akTySL4WcpS",
+	}
+	req := newfileUploadRequest("https://api.api-ninjas.com/v1/imagetotext", map[string]string{}, "image", b, HEADERS)
+	resp, _ := c.Do(req)
+	bd, _ := ioutil.ReadAll(resp.Body)
+	w.Write(bd)
+	w.Write([]byte("oki"))
 }
 
 func init() {

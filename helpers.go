@@ -301,3 +301,26 @@ func WriteError(msg string, w http.ResponseWriter) {
 	_d := []byte(`{"error":"` + msg + `", "status":400}`)
 	w.Write(_d)
 }
+
+func newfileUploadRequest(uri string, params map[string]string, paramName, fileContents []byte, headers map[string]string) *http.Request {
+	body := new(bytes.Buffer)
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile(paramName, "image.jpg")
+	if err != nil {
+		return nil
+	}
+	part.Write(fileContents)
+	for key, val := range params {
+		_ = writer.WriteField(key, val)
+	}
+	err = writer.Close()
+	if err != nil {
+		return nil
+	}
+	req, _ := http.NewRequest("POST", uri, body)
+        for a, b := range headers {
+req.Header.Add(a, b)
+}
+return req
+}
+

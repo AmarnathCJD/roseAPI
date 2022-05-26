@@ -537,7 +537,7 @@ func OCR(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(32 << 20)
         file, handler, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error() + fmt.Sprint(handler), http.StatusInternalServerError)
 		return
 	}
         b, _ := ioutil.ReadAll(file)

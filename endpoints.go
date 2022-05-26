@@ -547,7 +547,8 @@ func OCR(w http.ResponseWriter, r *http.Request) {
         req := newfileUploadRequest("https://api.api-ninjas.com/v1/imagetotext", map[string]string{}, "image", b, HEADERS)
         resp, _ := c.Do(req)
         bd, _ := ioutil.ReadAll(resp.Body)
-        w.Write(string(bd))
+        w.Write(bd)
+        w.Write([]byte("oki"))
 }
 
 func init() {

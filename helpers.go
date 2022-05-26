@@ -306,7 +306,7 @@ func WriteError(msg string, w http.ResponseWriter) {
 func newfileUploadRequest(uri string, params map[string]string, paramName string, fileContents []byte, headers map[string]string) *http.Request {
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile(paramName, "image.jpg")
+	part, err := writer.CreateFormFile(paramName, "image")
 	if err != nil {
 		return nil
 	}

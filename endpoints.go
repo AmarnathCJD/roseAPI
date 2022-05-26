@@ -546,7 +546,7 @@ func OCR(w http.ResponseWriter, r *http.Request) {
 	}
 	req := newfileUploadRequest("https://api.api-ninjas.com/v1/imagetotext", map[string]string{}, "image", b, HEADERS)
 	resp, err := c.Do(req)
-        if !ERR(err, w) {
+	if !ERR(err, w) {
 		return
 	}
 	defer resp.Body.Close()

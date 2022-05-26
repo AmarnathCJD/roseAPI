@@ -305,11 +305,11 @@ func WriteError(msg string, w http.ResponseWriter) {
 
 func newfileUploadRequest(uri string, params map[string]string, paramName string, fileContents []byte, headers map[string]string) *http.Request {
 	pipeReader, pipeWriter := io.Pipe()
-        writer := multipart.NewWriter(pipeWriter)
-        go func() {
+	writer := multipart.NewWriter(pipeWriter)
+	go func() {
 		defer pipeWriter.Close()
 		part, _ := writer.CreateFormFile(paramName, "file.jpg")
-                part.Write(fileContents)
+		part.Write(fileContents)
 
 		for field, value := range params {
 			if err := writer.WriteField(field, value); err != nil {
@@ -322,9 +322,9 @@ func newfileUploadRequest(uri string, params map[string]string, paramName string
 			return
 		}
 	}()
-        req, _ := http.NewRequest("POST", uri, pipeReader)
-        for field, value := range headers {
-req.Header.Add(field, value)
-}
-return req
+	req, _ := http.NewRequest("POST", uri, pipeReader)
+	for field, value := range headers {
+		req.Header.Add(field, value)
+	}
+	return req
 }

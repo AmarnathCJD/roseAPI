@@ -565,6 +565,6 @@ func init() {
 	http.HandleFunc("/stream", Stream)
 	http.HandleFunc("/urlpreview", LinkPreview)
 	http.HandleFunc("/screenshot", ScreenShot)
-        http.HandleFunc("/ocr", OCR)
+	http.HandleFunc("/ocr", OCR)
 	http.HandleFunc("/", HomePage)
 }

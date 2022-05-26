@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+        "mime/multipart"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/buger/jsonparser"

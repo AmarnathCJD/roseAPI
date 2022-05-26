@@ -327,5 +327,5 @@ func newfileUploadRequest(uri string, params map[string]string, paramName string
 	for field, value := range headers {
 		req.Header.Add(field, value)
 	}
-	return req
+	return req // fix it not workn, debugg
 }

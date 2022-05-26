@@ -309,7 +309,7 @@ func newfileUploadRequest(uri string, params map[string]string, paramName string
         go func() {
 		defer pipeWriter.Close()
 		part, _ := writer.CreateFormFile(paramName, "file.jpg")
-                io.Copy(part, reader)
+                part.Write(fileContents)
 
 		for field, value := range params {
 			if err := writer.WriteField(field, value); err != nil {

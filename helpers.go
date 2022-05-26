@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"os"
@@ -15,7 +16,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-        "mime/multipart"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/buger/jsonparser"
@@ -319,9 +319,8 @@ func newfileUploadRequest(uri string, params map[string]string, paramName string
 		return nil
 	}
 	req, _ := http.NewRequest("POST", uri, body)
-        for a, b := range headers {
-req.Header.Add(a, b)
+	for a, b := range headers {
+		req.Header.Add(a, b)
+	}
+	return req
 }
-return req
-}
-

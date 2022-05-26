@@ -541,6 +541,9 @@ func OCR(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	b, _ := ioutil.ReadAll(file)
+        w.Header().Set("Content-Type", "image/png")
+		w.Write(b)
+		return
 	HEADERS := map[string]string{
 		"X-Api-Key": "IQcdz030YPMT3zSRrhHzRQ==sNdD9akTySL4WcpS",
 	}
@@ -548,7 +551,6 @@ func OCR(w http.ResponseWriter, r *http.Request) {
 	resp, _ := c.Do(req)
 	bd, _ := ioutil.ReadAll(resp.Body)
 	w.Write(bd)
-	w.Write([]byte("oki"))
 }
 
 func init() {

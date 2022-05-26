@@ -308,7 +308,7 @@ func newfileUploadRequest(uri string, params map[string]string, paramName string
 	writer := multipart.NewWriter(pipeWriter)
 	go func() {
 		defer pipeWriter.Close()
-		part, _ := writer.CreateFormFile("image.jpg", "image")
+		part, _ := writer.CreateFormFile("image", "image.jpg")
 		part.Write(fileContents)
 		if len(params) != 0 {
 			for field, value := range params {

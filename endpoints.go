@@ -542,7 +542,7 @@ func OCR(w http.ResponseWriter, r *http.Request) {
 	}
         b, _ := ioutil.ReadAll(file)
         HEADERS := map[string]string{
-"X-Api-Key": "IQcdz030YPMT3zSRrhHzRQ==sNdD9akTySL4WcpS"
+"X-Api-Key": "IQcdz030YPMT3zSRrhHzRQ==sNdD9akTySL4WcpS",
 }
         req := newfileUploadRequest("https://api.api-ninjas.com/v1/imagetotext", map[string]string{}, "image", b, HEADERS)
         resp, _ := c.Do(req)

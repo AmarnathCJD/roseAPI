@@ -578,12 +578,14 @@ func FileInfo(w http.ResponseWriter, r *http.Request) {
 	if ERR(err, w) {
 		return
 	}
+        w.Write([]byte(URL))
 	defer resp.Body.Close()
 	doc, _ := goquery.NewDocumentFromReader(resp.Body)
 	title := doc.Find("title").Text()
 	info := doc.Find("infoBox").Text()
 	icon := doc.Find("entryIcon").AttrOr("data-bg-lg", "")
 	var programs []string
+        w.Write([]byte(title))
 	doc.Find("program").Each(func(i int, s *goquery.Selection) {
 		programs = append(programs, s.Text())
 	})

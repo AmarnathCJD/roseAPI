@@ -532,22 +532,12 @@ func FileInfo(w http.ResponseWriter, r *http.Request) {
 	}
 	URL := "https://fileinfo.com/extension/" + url.QueryEscape(q)
 	resp, err := c.Get(URL)
-	if ERR(err, w) {
+	if !ERR(err, w) {
 		return
 	}
-	w.Write([]byte(URL))
 	defer resp.Body.Close()
 	doc, _ := goquery.NewDocumentFromReader(resp.Body)
-	title := doc.Find("title").Text()
-	info := doc.Find("infoBox").Text()
-	icon := doc.Find("entryIcon").AttrOr("data-bg-lg", "")
-	var programs []string
-	w.Write([]byte(title))
-	doc.Find("program").Each(func(i int, s *goquery.Selection) {
-		programs = append(programs, s.Text())
-	})
-	bytesD := []byte(fmt.Sprintf(`{"ext": "%s", "title": "%s", "description": "%s", "icon": "%s", "programs": "%s"}`, q, title, info, icon, strings.Join(programs, ",")))
-	WriteJson(w, r, string(bytesD), i)
+
 }
 
 func ImdbTitleInfo(w http.ResponseWriter, r *http.Request) {

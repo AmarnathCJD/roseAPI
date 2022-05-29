@@ -139,6 +139,18 @@ type Title struct {
 	ReleaseDate string   `json:"releaseDate,omitempty"`
 }
 
+type FileExt struct {
+	Ext         string `json:"ext,omitempty"`
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
+	Category    string `json:"category,omitempty"`
+	Icon        string `json:"icon,omitempty"`
+	Programs    []struct {
+		Name     string `json:"name,omitempty"`
+		Platform string `json:"platform,omitempty"`
+	} `json:"programs,omitempty"`
+}
+
 var _help_ = map[string]string{
 	"google":         `Search Google.` + "\n" + `Usage: {}/google?q=<query>` + "\n" + `Example: {}/google?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Google Result]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
 	"tpb":            `Search The Pirate Bay.` + "\n" + `Usage: {}/tpb?q=<query>` + "\n" + `Example: {}/tpb?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Torrents]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,

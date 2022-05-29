@@ -4,7 +4,6 @@ import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -13,6 +12,8 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 var (
@@ -312,46 +313,6 @@ func Math(w http.ResponseWriter, r *http.Request) {
 	WriteJson(w, r, []byte(`{"expression": "`+q+`", "result": "`+fmt.Sprint(b)+`"}`), "")
 }
 
-func Games(w http.ResponseWriter, r *http.Request) {
-	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
-	query := r.URL.Query()
-	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
-		return
-	}
-	q := query.Get("q")
-	i := query.Get("i")
-	if q == "" {
-		http.Error(w, "missing query", http.StatusBadRequest)
-		return
-	}
-	url := "https://repack-mechanics.com/?do=search&subaction=search&story=" + url.QueryEscape(q)
-	resp, err := c.Get(url)
-	if !ERR(err, w) {
-		return
-	}
-	defer resp.Body.Close()
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if !ERR(err, w) {
-		return
-	}
-	var d []GameResult
-	doc.Find("div").Each(func(i int, s *goquery.Selection) {
-		if s.HasClass("img-box") {
-			var _d GameResult
-			a := s.Find("a")
-			_d.Description = a.Text()
-			_d.URL = a.AttrOr("href", "")
-			img := s.Find("img")
-			_d.Poster = img.AttrOr("src", "")
-			title_poster := s.Find("h2")
-			_d.Title = title_poster.Text()
-			d = append(d, _d)
-		}
-	})
-	WriteJson(w, r, d, i)
-}
-
 func Pinterest(w http.ResponseWriter, r *http.Request) {
 }
 
@@ -403,10 +364,6 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 	_ily := strings.Join(ly_list, "\n")
 	WriteJson(w, r, EncodeJson(`"`+_ily+`"`), i)
 }
-
-// spotify "https://spclient.wg.spotify.com/color-lyrics/v2/track/0fcnEPWBnqHKqKsR4JXjAS/image/https%3A%2F%2Fi.scdn.co%2Fimage%2Fab67616d0000b2738c0d62cedeabf6b7204c65f9?format=json&vocalRemoval=false&market=from_token"
-// trackID + imgeURL fetch....
-// Lyrics API Boom
 
 func Stream(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
@@ -593,16 +550,42 @@ func FileInfo(w http.ResponseWriter, r *http.Request) {
 	WriteJson(w, r, string(bytesD), i)
 }
 
+func ImdbTitleInfo(w http.ResponseWriter, r *http.Request) {
+	if !blockWrongMethod(w, r, "GET") {
+		return
+	}
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
+		return
+	}
+	id := query.Get("id")
+	if id == "" {
+		id = query.Get("title")
+	}
+	if id == "" {
+		WriteError("missing param, 'id' or 'title'", w)
+		return
+	}
+	T := ImdbTtitle(id)
+	if T.Title == "" {
+		WriteError("not found in ImDB", w)
+		return
+	}
+	WriteJson(w, r, T, query.Get("i"))
+}
+
 func init() {
 	http.HandleFunc("/tpb", Tpb)
 	http.HandleFunc("/google", Google)
 	http.HandleFunc("/youtube", Youtube)
 	http.HandleFunc("/youtube/stream", YoutubeStream)
 	http.HandleFunc("/imdb", ImDB)
+	http.HandleFunc("/imdb/title", ImdbTitleInfo)
 	http.HandleFunc("/chatbot", ChatBot)
 	http.HandleFunc("/lyrics", LyricsA)
 	http.HandleFunc("/math", Math)
-	http.HandleFunc("/game", Games)
 	http.HandleFunc("/spotify", Spotify)
 	http.HandleFunc("/stream", Stream)
 	http.HandleFunc("/urlpreview", LinkPreview)

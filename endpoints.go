@@ -1,8 +1,10 @@
 package main
 
 import (
+	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/PuerkitoBio/goquery"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,8 +13,6 @@ import (
 	"strings"
 	"text/template"
 	"time"
-
-	"github.com/PuerkitoBio/goquery"
 )
 
 var (
@@ -442,7 +442,6 @@ func YoutubeStream(w http.ResponseWriter, r *http.Request) {
 	var data = strings.NewReader(`{"url":"` + vid_url + `"}`)
 	req, _ := http.NewRequest("POST", "https://api.onlinevideoconverter.pro/api/convert", data)
 	req.Header.Set("sec-fetch-site", "same-site")
-	log.Println(req.Header)
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := c.Do(req)
 	if !ERR(err, w) {
@@ -461,6 +460,139 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 	template.Execute(w, nil)
 }
 
+func LinkPreview(w http.ResponseWriter, r *http.Request) {
+	if !blockWrongMethod(w, r, "GET") {
+		return
+	}
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
+		return
+	}
+	_url := query.Get("url")
+	i := query.Get("i")
+	if _url == "" {
+		http.Error(w, "missing url", http.StatusBadRequest)
+		return
+	}
+	req, _ := http.NewRequest("GET", "https://api.labs.cognitive.microsoft.com/urlpreview/v7.0/search"+"?q="+url.QueryEscape(_url), nil)
+	req.Header.Set("Ocp-Apim-Subscription-Key", "27b02a2c7d394388a719e0fdad6edb10")
+	resp, err := c.Do(req)
+	if !ERR(err, w) {
+		return
+	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	WriteJson(w, r, string(body), i)
+}
+
+func ScreenShot(w http.ResponseWriter, r *http.Request) {
+	if !blockWrongMethod(w, r, "GET") {
+		return
+	}
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
+		return
+	}
+	_url := query.Get("url")
+	i := query.Get("i")
+	image := query.Get("image")
+	if _url == "" {
+		http.Error(w, "missing url", http.StatusBadRequest)
+		return
+	}
+	BASEURL := fmt.Sprintf("https://webshot.deam.io/%s?type=jpeg&quality=100&fullPage=false&height=540&width=960", _url)
+	resp, err := c.Get(BASEURL)
+	if !ERR(err, w) {
+		return
+	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	if strings.Contains(string(body), "<h") {
+		WriteJson(w, r, string([]byte(`{"error":"`+string(body)+`"}`)), i)
+		return
+	}
+	if image == "true" {
+		w.Header().Set("Content-Type", "image/png")
+		w.Write(body)
+		return
+	}
+	sEnc := b64.StdEncoding.EncodeToString(body)
+	WriteJson(w, r, string([]byte(`{"image":"`+sEnc+`"}`)), i)
+}
+
+func OCR(w http.ResponseWriter, r *http.Request) {
+	if !blockWrongMethod(w, r, "POST") {
+		return
+	}
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
+		return
+	}
+	r.ParseMultipartForm(32 << 20)
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	b, _ := ioutil.ReadAll(file)
+	HEADERS := map[string]string{
+		"X-Api-Key": "IQcdz030YPMT3zSRrhHzRQ==sNdD9akTySL4WcpS",
+	}
+	req := newfileUploadRequest("https://api.api-ninjas.com/v1/imagetotext", map[string]string{}, "image", b, HEADERS)
+	resp, err := c.Do(req)
+	if !ERR(err, w) {
+		return
+	}
+	defer resp.Body.Close()
+	bd, _ := ioutil.ReadAll(resp.Body)
+	w.Write(bd)
+}
+
+func FileInfo(w http.ResponseWriter, r *http.Request) {
+	if !blockWrongMethod(w, r, "GET") {
+		return
+	}
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
+		return
+	}
+	q := query.Get("q")
+	i := query.Get("i")
+	if q == "" {
+		q = query.Get("ext")
+	}
+	if q == "" {
+		WriteError("missing param, 'ext' or 'q'", w)
+		return
+	}
+	URL := "https://fileinfo.com/extension/" + url.QueryEscape(q)
+	resp, err := c.Get(URL)
+	if ERR(err, w) {
+		return
+	}
+	w.Write([]byte(URL))
+	defer resp.Body.Close()
+	doc, _ := goquery.NewDocumentFromReader(resp.Body)
+	title := doc.Find("title").Text()
+	info := doc.Find("infoBox").Text()
+	icon := doc.Find("entryIcon").AttrOr("data-bg-lg", "")
+	var programs []string
+	w.Write([]byte(title))
+	doc.Find("program").Each(func(i int, s *goquery.Selection) {
+		programs = append(programs, s.Text())
+	})
+	bytesD := []byte(fmt.Sprintf(`{"ext": "%s", "title": "%s", "description": "%s", "icon": "%s", "programs": "%s"}`, q, title, info, icon, strings.Join(programs, ",")))
+	WriteJson(w, r, string(bytesD), i)
+}
+
 func init() {
 	http.HandleFunc("/tpb", Tpb)
 	http.HandleFunc("/google", Google)
@@ -473,5 +605,9 @@ func init() {
 	http.HandleFunc("/game", Games)
 	http.HandleFunc("/spotify", Spotify)
 	http.HandleFunc("/stream", Stream)
+	http.HandleFunc("/urlpreview", LinkPreview)
+	http.HandleFunc("/screenshot", ScreenShot)
+	http.HandleFunc("/ocr", OCR)
+	http.HandleFunc("/fileinfo", FileInfo)
 	http.HandleFunc("/", HomePage)
 }

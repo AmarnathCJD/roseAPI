@@ -2,6 +2,8 @@ module main
 
 go 1.17
 
+// +heroku goVersion go1.18
+
 require (
 	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/buger/jsonparser v1.1.1

@@ -322,9 +322,6 @@
           </blockquote>
         </div>
       </div>
-      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
       <script type="text/javascript">
         document.getElementById("model-close").onclick = function () {
           $('#ModalCenter').modal('hide');
@@ -446,7 +443,7 @@
           data = help_data[id];
           hostname = window.location.hostname;
           port = window.location.port;
-          if (port != "80") {
+          if (port != "80" && port != "") {
             hostname = hostname + ":" + port;
           }
           url = "http://" + hostname + data.url;
@@ -469,7 +466,7 @@
               </select>
                <button type="button" class="btn btn-primary btn-sm"
                    style="margin-top: 12px; margin-bottom:12px;" onclick='sendReq(this)' data-url='${url}'>Request</button>
-              <div class="card" style="width: 18rem;">
+              <div class="card">
                <div class="card-body">
                 <p class="card-text" id="params"></p>
               </div>

@@ -544,18 +544,20 @@ func FileInfo(w http.ResponseWriter, r *http.Request) {
 		Url:         URL,
 		Icon:        doc.Find(".entryIcon").AttrOr("data-bg-lg", ""),
 	}
-	var Programs []map[string]string
+	var Programs []map[string][]map[string]string
+	var pt []map[string]string
 	doc.Find(".programs").Each(func(i int, s *goquery.Selection) {
-		Platform := s.AttrOr("data-plat", "")
-		log.Println(Platform)
-		if Platform != "" {
+		platform := s.AttrOr("data-plat", "")
+		if platform != "" {
 			s.Find(".appmid").Each(func(i int, s *goquery.Selection) {
-				Programs = append(Programs, map[string]string{
-					"name":     s.Find("a").Text(),
-					"platform": Platform,
-					"license":  s.Find(".license").Text(),
+				pt = append(pt, map[string]string{
+					"name":    s.Find("a").Text(),
+					"url":     s.Find("a").AttrOr("href", ""),
+					"license": s.Find(".license").Text(),
 				})
 			})
+			Programs = append(Programs, map[string][]map[string]string{platform: pt})
+			pt = []map[string]string{}
 		}
 	})
 	ext.Programs = Programs

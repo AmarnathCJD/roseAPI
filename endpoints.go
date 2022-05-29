@@ -547,11 +547,13 @@ func FileInfo(w http.ResponseWriter, r *http.Request) {
 	var Programs []map[string]string
 	doc.Find(".programs").Each(func(i int, s *goquery.Selection) {
 		Platform := s.AttrOr("data-plat", "")
+		log.Println(Platform)
 		if Platform != "" {
-			s.Find("appmid").Each(func(i int, s *goquery.Selection) {
+			s.Find(".appmid").Each(func(i int, s *goquery.Selection) {
 				Programs = append(Programs, map[string]string{
-					"name":     s.Text(),
+					"name":     s.Find("a").Text(),
 					"platform": Platform,
+					"license":  s.Find(".license").Text(),
 				})
 			})
 		}

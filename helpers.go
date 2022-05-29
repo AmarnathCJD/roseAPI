@@ -267,7 +267,7 @@ func Ly3(q string) string {
 
 // https://gaana.com/lyrics/coca-cola-38
 
-func StreamSrc(query string) []StreamS {
+func StreamSrc(query string) []OTT {
 	var data = strings.NewReader(`{"operationName":"GetSearchTitles","variables":{"searchTitlesSortBy":"POPULAR","first":5,"sortRandomSeed":0,"searchAfterCursor":"","searchTitlesFilter":{"searchQuery":"` + query + `","personId":null},"language":"en","country":"IN"},"query":"query GetSearchTitles($country: Country!, $searchTitlesFilter: TitleFilter, $searchAfterCursor: String, $searchTitlesSortBy: PopularTitlesSorting! = POPULAR, $first: Int! = 5, $language: Language!, $sortRandomSeed: Int! = 0, $profile: PosterProfile, $backdropProfile: BackdropProfile, $format: ImageFormat) {\n  popularTitles(\n    country: $country\n    filter: $searchTitlesFilter\n    after: $searchAfterCursor\n    sortBy: $searchTitlesSortBy\n    first: $first\n    sortRandomSeed: $sortRandomSeed\n  ) {\n    totalCount\n    pageInfo {\n      startCursor\n      endCursor\n      hasPreviousPage\n      hasNextPage\n      __typename\n    }\n    edges {\n      ...SearchTitleGraphql\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment SearchTitleGraphql on PopularTitlesEdge {\n  cursor\n  node {\n    id\n    objectId\n    objectType\n    content(country: $country, language: $language) {\n      title\n      fullPath\n      originalReleaseYear\n      scoring {\n        imdbScore\n        imdbVotes\n        tmdbScore\n        tmdbPopularity\n        __typename\n      }\n      posterUrl(profile: $profile, format: $format)\n      backdrops(profile: $backdropProfile, format: $format) {\n        backdropUrl\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n"}`)
 	req, _ := http.NewRequest("POST", "https://apis.justwatch.com/graphql", data)
 	req.Header.Set("Content-Type", "application/json")
@@ -286,12 +286,12 @@ func StreamSrc(query string) []StreamS {
 		log.Println(err)
 	}
 	defer rs.Body.Close()
-	var src []StreamS
+	var src []OTT
 	doc, _ := goquery.NewDocumentFromReader(rs.Body)
 	doc.Find(".price-comparison__grid__row__element").Each(func(i int, s *goquery.Selection) {
 		a := s.Find("a")
 		img := a.Find("img")
-		src = append(src, StreamS{img.AttrOr("alt", ""), strings.TrimSpace(s.Find("span").Text()), a.AttrOr("href", ""), "Stream", strings.TrimSpace(s.Find(".price-comparison__grid__row__price").Text())})
+		src = append(src, OTT{img.AttrOr("alt", ""), strings.TrimSpace(s.Find("span").Text()), a.AttrOr("href", ""), "Stream", strings.TrimSpace(s.Find(".price-comparison__grid__row__price").Text())})
 	})
 	return src
 }
@@ -300,4 +300,23 @@ func WriteError(msg string, w http.ResponseWriter) {
 	w.WriteHeader(http.StatusBadRequest)
 	_d := []byte(`{"error":"` + msg + `", "status":400}`)
 	w.Write(_d)
+}
+
+func ImdbTtitle(id string) Title {
+	url := "https://www.imdb.com/title/" + id + "/"
+	resp, err := Aclient.Get(url)
+	if err != nil {
+		log.Println(err)
+	}
+	defer resp.Body.Close()
+	doc, _ := goquery.NewDocumentFromReader(resp.Body)
+	title := strings.TrimSpace(doc.Find(`.sc-b73cd867-0`).Text())
+	year := strings.TrimSpace(doc.Find(`.sc-8c396aa2-2`).Text())
+	rating := strings.TrimSpace(doc.Find(`.sc-7ab21ed2-1`).Text())
+	var genres []string
+	doc.Find(`.sc-16ede01-3`).Each(func(i int, s *goquery.Selection) {
+		genres = append(genres, strings.TrimSpace(s.Text()))
+	})
+	plot := strings.TrimSpace(doc.Find(`.sc-388740f9-0`).Find(".ipc-html-content").Text())
+	return Title{Title: title, Year: year, Rating: rating, Genre: genres, Plot: plot}
 }

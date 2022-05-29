@@ -115,12 +115,28 @@ type LyricsR struct {
 	} `json:"lyrics"`
 }
 
-type StreamS struct {
+type OTT struct {
 	Name    string `json:"name,omitempty"`
 	Quality string `json:"quality,omitempty"`
 	URL     string `json:"url,omitempty"`
 	Type    string `json:"type,omitempty"`
 	Price   string `json:"price,omitempty"`
+}
+
+type Title struct {
+	Title       string   `json:"title,omitempty"`
+	Year        string   `json:"year,omitempty"`
+	Rating      string   `json:"rating,omitempty"`
+	Genre       []string `json:"genre,omitempty"`
+	Plot        string   `json:"plot,omitempty"`
+	Poster      string   `json:"poster,omitempty"`
+	ID          string   `json:"id,omitempty"`
+	Stars       []string `json:"stars,omitempty"`
+	Directors   []string `json:"directors,omitempty"`
+	AKA         string   `json:"aka,omitempty"`
+	Production  string   `json:"production,omitempty"`
+	Language    string   `json:"language,omitempty"`
+	ReleaseDate string   `json:"releaseDate,omitempty"`
 }
 
 var _help_ = map[string]string{
@@ -134,81 +150,3 @@ var _help_ = map[string]string{
 	"stream":         `Search Stream.` + "\n" + `Usage: {}/stream?q=<query>` + "\n" + `Example: {}/stream?q=Avengers` + "\n" + `Returns:` + "\n" + `    [Array of Stream Results]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    q: The search query.` + "\n" + `    i: Indentaion (Bool, optional).`,
 	"youtube/stream": `Get stream url for youtube Vids.` + "\n" + `Usage: {}/youtube/stream?id=<vid_id>` + "\n" + `Example: {}/youtube/stream?id=8FAUEv_E_xQ` + "\n" + `Returns:` + "\n" + `    [Array of Stream URLS with Avaliable Qualities]` + "\n" + `If no results are found, an empty array is returned.` + "\n" + `Parameters:` + "\n" + `    id: The Vid ID.` + "\n" + `    i: Indentaion (Bool, optional).`,
 }
-
-var HOME_PAGE = `
-<!DOCTYPE html>
-<html>
-<head>
-<title>roseAPI</title>
-<style>
-body {
-	background-color: #f0f0f0;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 14px;
-	line-height: 1.42857143;
-	color: #333;
-	margin: 0;
-	padding: 0;
-}
-.endpoint {
-	background-color: #fff;
-	border-radius: 4px;
-	border: 1px solid #ddd;
-	padding: 10px;
-	margin: 10px;
-}
-.endpoint h3 {
-	margin: 0;
-	padding: 0;
-}
-.endpoint method {
-	font-weight: bold;
-	margin: 0;
-	padding: 0;
-}
-</style>
-</head>
-<body>
-<h1>roseAPI</h1>
-<p>
-	roseAPI is a RESTful API for the Rose project.
-</p>
-<p>
-	roseAPI is currently in beta.
-</p>
-<p>
-	API Endpoints:
-</p>
-<div class="endpoint">
-	<h3>/chatbot</h3>
-	<p>
-		<span class="method">POST</span>
-		<span class="path">/chatbot</span>
-	</p>
-	<p>
-		<span class="description">
-			Talk to the Kuki chatbot.
-		</span>
-	</p>
-	<p>
-		<span class="parameter">
-			message
-		</span>
-		<span class="description">
-			The message query.
-		</span>
-	</p>
-	<p>
-		<span class="return">
-			{"message":"response"}
-		</span>
-	</p>
-	<p>
-		<span class="error">
-			502
-		</span>
-	</p>
-</div>
-</body>
-</html>
-`

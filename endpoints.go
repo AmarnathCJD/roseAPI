@@ -565,7 +565,7 @@ func FileInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
         q := query.Get("q")
-i = query.Get("i")
+i := query.Get("i")
         if q == "" {
 q = query.Get("ext")
 }

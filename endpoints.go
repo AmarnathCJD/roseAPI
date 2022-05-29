@@ -460,7 +460,6 @@ func FileInfo(w http.ResponseWriter, r *http.Request) {
 			s.Find(".appmid").Each(func(i int, s *goquery.Selection) {
 				pt = append(pt, map[string]string{
 					"name":    s.Find("a").Text(),
-					"url":     s.Find("a").AttrOr("href", ""),
 					"license": s.Find(".license").Text(),
 				})
 			})

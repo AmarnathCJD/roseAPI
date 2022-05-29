@@ -298,9 +298,9 @@ func StreamSrc(query string) []OTT {
 }
 
 func WriteError(msg string, w http.ResponseWriter) {
-	w.WriteHeader(http.StatusBadRequest)
 	_d := []byte(`{"error":"` + msg + `", "status":400}`)
 	w.Write(_d)
+	w.WriteHeader(400)
 }
 
 func WriteHelp(e string, w http.ResponseWriter) {

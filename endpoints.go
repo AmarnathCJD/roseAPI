@@ -571,7 +571,9 @@ func ImdbTitleInfo(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
+		e := GetEnpointByPath(r.URL.Path)
+		d, _ := json.Marshal(e)
+		w.Write(d)
 		return
 	}
 	id := query.Get("id")

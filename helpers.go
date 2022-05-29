@@ -47,7 +47,7 @@ func fetchPort() string {
 
 func ERR(err error, w http.ResponseWriter) bool {
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		WriteError(err.Error(), w)
 		return false
 	}
 	return true

@@ -554,6 +554,48 @@ func OCR(w http.ResponseWriter, r *http.Request) {
 	w.Write(bd)
 }
 
+func FileInfo(w http.ResponseWriter, r *http.Request) {
+	if !blockWrongMethod(w, r, "GET") {
+		return
+	}
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
+		return
+	}
+        q := query.Get("q")
+i = query.Get("i")
+        if q == "" {
+q = query.Get("ext")
+}
+if q == "" {
+ WriteError("missing param, 'ext' or 'q'", w)
+ return
+}
+URL := "https://fileinfo.com/extension/" + url.QueryEscape(q)
+resp, err := c.Get(URL)
+if ERR(err, w) {
+return
+}
+defer resp.Body.Close()
+doc, _ := goquery.NewDocumentFromReader(resp.Body)
+title := doc.Find("title").Text()
+info := doc.Find("infoBox").Text()
+icon := doc.Find("entryIcon").AttrOr("data-bg-lg", "")
+var programs []string
+doc.Find("program").Each(func(i int, s *goquery.Selection) {
+ programs = append(programs, s.Text())
+})
+bytesD := []byte(fmt.Sprintf(`{"ext": "%s", "title": "%s", "description": "%s", "icon": "%s", "programs": "%s"}`, q, title, info, icon, strings.Join(programs, ",")))
+WriteJson(w, r, string(bytesD), i)
+}
+
+
+
+
+
+
 func init() {
 	http.HandleFunc("/tpb", Tpb)
 	http.HandleFunc("/google", Google)
@@ -569,5 +611,6 @@ func init() {
 	http.HandleFunc("/urlpreview", LinkPreview)
 	http.HandleFunc("/screenshot", ScreenShot)
 	http.HandleFunc("/ocr", OCR)
+        http.HandleFunc("fileinfo", FileInfo)
 	http.HandleFunc("/", HomePage)
 }

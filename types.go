@@ -394,6 +394,34 @@ var Endpoints = []Endpoint{
 			{Name: "Screenshot", Type: "JSON Result", Info: "Screenshot."},
 		},
 	},
+	{
+		Name:   "The Pirate Bay",
+		Path:   "/tpb",
+		Method: "GET",
+		Info:   "Search for torrents on The Pirate Bay.",
+		Usage:  `{}/tpb?q=avengers`,
+		Params: []Parameter{
+			{Name: "q", Type: "string", Info: "The query."},
+			{Name: "i", Type: "bool", Info: "Indentaion (Bool, optional)."},
+		},
+		Returns: []Parameter{
+			{Name: "List of Results", Type: "JSON Result", Info: "Torrent results."},
+		},
+	},
+	{
+		Name:   "OTT Streaming",
+		Path:   "/stream",
+		Method: "GET",
+		Info:   "Stream a video from OTT.",
+		Usage:  `{}/stream?url=https://www.youtube.com/watch?v=dQw4w9WgXcQ`,
+		Params: []Parameter{
+			{Name: "url", Type: "string", Info: "The URL."},
+			{Name: "i", Type: "bool", Info: "Indentaion (Bool, optional)."},
+		},
+		Returns: []Parameter{
+			{Name: "Stream", Type: "JSON Result", Info: "Stream."},
+		},
+	},
 }
 
 func GetEnpointByPath(path string) *Endpoint {

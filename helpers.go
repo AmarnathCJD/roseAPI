@@ -303,6 +303,12 @@ func WriteError(msg string, w http.ResponseWriter) {
 	w.Write(_d)
 }
 
+func WriteHelp(e string, w http.ResponseWriter) {
+	_help := GetEnpointByPath(e)
+	b, _ := json.Marshal(_help)
+	w.Write(b)
+}
+
 func ImdbTtitle(id string) Title {
 	url := "https://www.imdb.com/title/" + id + "/"
 	resp, err := Aclient.Get(url)

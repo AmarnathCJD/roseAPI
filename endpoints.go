@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -27,8 +26,7 @@ func Tpb(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["tpb"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/tpb", w)
 	}
 	i := query.Get("i")
 	q := query.Get("q")
@@ -51,8 +49,7 @@ func Google(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["google"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/google", w)
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -101,8 +98,7 @@ func Youtube(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["youtube"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/youtube", w)
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -135,8 +131,7 @@ func ImDB(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/imdb", w)
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -182,8 +177,7 @@ func ChatBot(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	q := query.Get("message")
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["chatbot"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/chatbot", w)
 	}
 	if q == "" {
 		http.Error(w, "missing 'message'", http.StatusBadRequest)
@@ -202,90 +196,11 @@ func ChatBot(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func Lyrics(w http.ResponseWriter, r *http.Request) {
-	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
-	query := r.URL.Query()
-	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
-		return
-	}
-	q := query.Get("q")
-	if q == "" {
-		http.Error(w, "missing query", http.StatusBadRequest)
-		return
-	}
-	seURL := "https://cse.google.com/cse/element/v1?rsz=filtered_cse&num=10&hl=en&source=gcsc&gss=.com&cselibv=3e1664f444e6eb06&cx=15ba6306c8bf0c5d0&q=" + q + "&safe=off&cse_tok=AJvRUv3bw29E-03lEFZhaQV4UDN7:1652443252075&exp=csqr,cc&callback=google.search.cse.api10882"
-	resp, err := c.Get(seURL)
-	if !ERR(err, w) {
-		return
-	}
-	var b []byte
-	if b, err = ioutil.ReadAll(resp.Body); err != nil {
-		http.Error(w, "invalid json", http.StatusBadRequest)
-		return
-	}
-	bstring := strings.Replace(string(b), `google.search.cse.api10882(`, "", 1)
-	bstring = strings.Replace(bstring, ");", "", 1)
-	bstring = strings.Replace(bstring, "/*O_o*/", "", -1)
-	rd := strings.NewReader(bstring)
-	var d map[string]interface{}
-	if err := json.NewDecoder(rd).Decode(&d); err != nil {
-		http.Error(w, "invalid json", http.StatusBadRequest)
-		return
-	}
-	var lyricURL string
-	for _, c := range d["results"].([]interface{}) {
-		if c.(map[string]interface{})["url"].(string) != "" {
-			if strings.Contains(c.(map[string]interface{})["url"].(string), "lyrics.com") {
-				lyricURL = c.(map[string]interface{})["url"].(string)
-				break
-			}
-		}
-	}
-	if lyricURL == "" {
-		http.Error(w, "lyrics not found", http.StatusNotFound)
-		return
-	}
-	resp_2, err := c.Get(lyricURL)
-	if !ERR(err, w) {
-		return
-	}
-	log.Println(lyricURL)
-	doc, err := goquery.NewDocumentFromReader(resp_2.Body)
-	if !ERR(err, w) {
-		return
-	}
-	var t string
-	h, _ := doc.Html()
-	w.Write([]byte(h))
-	doc.Find("lyric-body-text").Each(func(i int, s *goquery.Selection) {
-		t = s.Text()
-		fmt.Println(t)
-	})
-	w.Write([]byte(t))
-
-}
-
-func LyricsAPI(w http.ResponseWriter, r *http.Request) {
-	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
-	query := r.URL.Query()
-	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
-		return
-	}
-	q := query.Get("q")
-	if q == "" {
-		http.Error(w, "missing query", http.StatusBadRequest)
-		return
-	}
-}
-
 func Math(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/math", w)
 	}
 	q := query.Get("q")
 	if q == "" {
@@ -320,8 +235,7 @@ func Spotify(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/spotify", w)
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -344,8 +258,7 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/lyrics", w)
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -369,8 +282,7 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["lyrics"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/stream", w)
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -386,8 +298,7 @@ func YoutubeStream(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["youtube/stream"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/youtube/stream", w)
 	}
 	id := query.Get("id")
 	i := query.Get("i")
@@ -424,8 +335,7 @@ func LinkPreview(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/urlpreview", w)
 	}
 	_url := query.Get("url")
 	i := query.Get("i")
@@ -451,8 +361,7 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/screenshot", w)
 	}
 	_url := query.Get("url")
 	i := query.Get("i")
@@ -518,8 +427,7 @@ func FileInfo(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		w.Write([]byte(strings.ReplaceAll(_help_["imdb"], "{}", r.URL.Hostname())))
-		return
+		WriteHelp("/fileinfo", w)
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -571,10 +479,7 @@ func ImdbTitleInfo(w http.ResponseWriter, r *http.Request) {
 	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
 	query := r.URL.Query()
 	if query.Get("help") != "" {
-		e := GetEnpointByPath(r.URL.Path)
-		d, _ := json.Marshal(e)
-		w.Write(d)
-		return
+		WriteHelp("/imdb/title", w)
 	}
 	id := query.Get("id")
 	if id == "" {

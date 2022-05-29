@@ -238,14 +238,14 @@
                 <h5 class="card-title">
                   <i class="fas fa-user-friends"></i>
                   <b><img src="https://img.icons8.com/fluency/48/000000/microsoft-solitaire-collection.png" /> PC
-                    Games <span class="badge rounded-pill bg-success">GET</span></b>
+                    Extension Info <span class="badge rounded-pill bg-success">GET</span></b>
                 </h5>
                 <p class="card-text">
-                  Get info about Latest Triple AAA Titles<br>
+                  Get info about the file extension<br>
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="showModal(this)" data-id="game">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showModal(this)" data-id="ext">
                       View
                     </button>
                   </div>
@@ -345,13 +345,14 @@
               "q": "Query",
             }
           },
-          "games": {
-            "url": "/games",
-            "name": "Games",
-            "desc": "Cracked PC games (Triple AAA)",
+          "ext": {
+            "url": "/fileinfo",
+            "name": "File Extension",
+            "desc": "Get info on file extension",
             "method": "GET",
             "params": {
               "q": "Query",
+              "ext": "File Extension",
             }
           },
           "spotify": {

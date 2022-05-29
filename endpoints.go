@@ -606,6 +606,6 @@ func init() {
 	http.HandleFunc("/urlpreview", LinkPreview)
 	http.HandleFunc("/screenshot", ScreenShot)
 	http.HandleFunc("/ocr", OCR)
-	http.HandleFunc("fileinfo", FileInfo)
+	http.HandleFunc("/fileinfo", FileInfo)
 	http.HandleFunc("/", HomePage)
 }

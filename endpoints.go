@@ -537,7 +537,27 @@ func FileInfo(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 	doc, _ := goquery.NewDocumentFromReader(resp.Body)
-
+	ext := FileExt{
+		Ext:         q,
+		Title:       doc.Find("title").Text(),
+		Description: doc.Find(".infoBox").Text(),
+		Url:         URL,
+		Icon:        doc.Find(".entryIcon").AttrOr("data-bg-lg", ""),
+	}
+	var Programs []map[string]string
+	doc.Find(".programs").Each(func(i int, s *goquery.Selection) {
+		Platform := s.AttrOr("data-plat", "")
+		if Platform != "" {
+			s.Find("appmid").Each(func(i int, s *goquery.Selection) {
+				Programs = append(Programs, map[string]string{
+					"name":     s.Text(),
+					"platform": Platform,
+				})
+			})
+		}
+	})
+	ext.Programs = Programs
+	WriteJson(w, r, ext, i)
 }
 
 func ImdbTitleInfo(w http.ResponseWriter, r *http.Request) {

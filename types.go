@@ -140,15 +140,13 @@ type Title struct {
 }
 
 type FileExt struct {
-	Ext         string `json:"ext,omitempty"`
-	Title       string `json:"title,omitempty"`
-	Description string `json:"description,omitempty"`
-	Category    string `json:"category,omitempty"`
-	Icon        string `json:"icon,omitempty"`
-	Programs    []struct {
-		Name     string `json:"name,omitempty"`
-		Platform string `json:"platform,omitempty"`
-	} `json:"programs,omitempty"`
+	Ext         string              `json:"ext,omitempty"`
+	Title       string              `json:"title,omitempty"`
+	Description string              `json:"description,omitempty"`
+	Category    string              `json:"category,omitempty"`
+	Icon        string              `json:"icon,omitempty"`
+	Programs    []map[string]string `json:"programs,omitempty"`
+	Url         string              `json:"url,omitempty"`
 }
 
 var _help_ = map[string]string{

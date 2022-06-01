@@ -320,11 +320,18 @@ func StreamSrc(query string) []OTT {
 func WriteError(msg string, w http.ResponseWriter) {
 	_d := []byte(`{"error":"` + msg + `", "status":400}`)
 	w.Write(_d)
-	w.WriteHeader(400)
+	w.Header().Set("status", "400")
+}
+
+func WriteHtml(w http.ResponseWriter, html string) {
+	w.Header().Set("Content-Type", "text/html")
+	w.Write([]byte(html))
 }
 
 func WriteHelp(e string, w http.ResponseWriter) {
 	_help := GetEnpointByPath(e)
+	host := w.Header().Get("Host")
+	_help.Usage = strings.Replace(_help.Usage, "{}", host, -1)
 	b, _ := json.Marshal(_help)
 	w.Write(b)
 }
@@ -375,18 +382,18 @@ func newfileUploadRequest(uri string, params map[string]string, paramName string
 	return req // fix it not workn, debugg
 }
 
-func YoutubeDLBytes(url string, audio bool) (io.ReadCloser, error, string) {
+func YoutubeDLBytes(url string, audio bool) (io.ReadCloser, string, error) {
 	youtube := yt.Client{}
 	video, err := youtube.GetVideo(url)
 	if err != nil {
-		return nil, err, ""
+		return nil, "", err
 	}
 	if audio {
 		stream, _, err := youtube.GetStream(video, video.Formats.FindByItag(251))
 		if err != nil {
-			return nil, err, ""
+			return nil, "", err
 		}
-		return stream, nil, video.Title + ".mp3"
+		return stream, video.Title + ".mp3", nil
 	}
 	v := video.Formats.FindByItag(22)
 	if v == nil {
@@ -394,7 +401,7 @@ func YoutubeDLBytes(url string, audio bool) (io.ReadCloser, error, string) {
 	}
 	stream, _, err := youtube.GetStream(video, v)
 	if err != nil {
-		return nil, err, ""
+		return nil, "", err
 	}
-	return stream, nil, video.Title + ".mp4"
+	return stream, video.Title + ".mp4", nil
 }

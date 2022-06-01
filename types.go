@@ -441,6 +441,20 @@ var Endpoints = []Endpoint{
 			{Name: "video/audio", Type: "Bytes", Info: "Video/Audio."},
 		},
 	},
+	{
+		Name:   "Netflix Search",
+		Path:   "/netflix/search",
+		Method: "GET",
+		Info:   "Search for a movie on Netflix.",
+		Usage:  `{}/netflix/search?q=The%20Lion%20King`,
+		Params: []Parameter{
+			{Name: "q", Type: "string", Info: "The query."},
+			{Name: "i", Type: "bool", Info: "Indentaion (Bool, optional)."},
+		},
+		Returns: []Parameter{
+			{Name: "List of Results", Type: "JSON Result", Info: "Movie results."},
+		},
+	},
 }
 
 func GetEnpointByPath(path string) *Endpoint {

@@ -328,6 +328,20 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 	template.Execute(w, nil)
 }
 
+func Methods(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "GET, POST, PUT, DELETE, HEAD, OPTIONS, PATCH"+"\n\n")
+	w.Write([]byte(`Available methods:` + "\n\n"))
+	q := 0
+	for _, a := range Endpoints {
+		q++
+		host := r.Header.Get("Host")
+		w.Write([]byte(fmt.Sprintf("%d. ", q) + a.Name + ": " + host + a.Path + "\n"))
+	}
+	w.Write([]byte("\n\n" + "run 'curl -X GET " + r.Header.Get("Host") + "/methods' to see all available methods"))
+	w.Write([]byte("\n\n" + "run 'curl -X GET " + r.Header.Get("Host") + "/methods?help' to see help for each method"))
+	w.Write([]byte("\n\n" + "roseAPI 1.0.0"))
+}
+
 func LinkPreview(w http.ResponseWriter, r *http.Request) {
 	if !blockWrongMethod(w, r, "GET") {
 		return
@@ -545,9 +559,9 @@ func YoutubeDL(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
-		stream, err, name = YoutubeDLBytes(url, is_audio)
+		stream, name, err = YoutubeDLBytes(url, is_audio)
 	} else {
-		stream, err, name = YoutubeDLBytes("https://www.youtube.com/watch?v="+id, is_audio)
+		stream, name, err = YoutubeDLBytes("https://www.youtube.com/watch?v="+id, is_audio)
 	}
 	defer stream.Close()
 	if !ERR(err, w) {
@@ -563,12 +577,39 @@ func YoutubeDL(w http.ResponseWriter, r *http.Request) {
 	http.ServeContent(w, r, name, time.Now(), bytes.NewReader(b))
 }
 
+func NetFlixSearch(w http.ResponseWriter, r *http.Request) {
+	if !blockWrongMethod(w, r, "GET") {
+		return
+	}
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		WriteHelp("/netflix/search", w)
+		return
+	}
+	q := query.Get("q")
+	if q == "" {
+		WriteError("missing param, 'q'", w)
+		return
+	}
+	req, _ := http.NewRequest("GET", "http://unogs.com/api/search?limit=20&offset=0&query="+url.QueryEscape(q), nil)
+	req.Header.Set("REFERRER", "http://unogs.com")
+	req.Header.Set("Referer", "http://unogs.com/search")
+	resp, err := Aclient.Do(req)
+	if !ERR(err, w) {
+		return
+	}
+	defer resp.Body.Close()
+	WriteJson(w, r, resp.Body, query.Get("i"))
+}
+
 func init() {
 	http.HandleFunc("/tpb", Tpb)
 	http.HandleFunc("/google", Google)
 	http.HandleFunc("/youtube/search", Youtube)
 	http.HandleFunc("/youtube/stream", YoutubeStream)
 	http.HandleFunc("/youtube/download", YoutubeDL)
+	http.HandleFunc("/netflix/search", NetFlixSearch)
 	http.HandleFunc("/imdb", ImDB)
 	http.HandleFunc("/imdb/title", ImdbTitleInfo)
 	http.HandleFunc("/chatbot", ChatBot)
@@ -581,4 +622,5 @@ func init() {
 	http.HandleFunc("/ocr", OCR)
 	http.HandleFunc("/fileinfo", FileInfo)
 	http.HandleFunc("/", HomePage)
+	http.HandleFunc("/methods", Methods)
 }

@@ -550,7 +550,7 @@ func YoutubeDL(w http.ResponseWriter, r *http.Request) {
 func init() {
 	http.HandleFunc("/tpb", Tpb)
 	http.HandleFunc("/google", Google)
-	http.HandleFunc("/youtube", Youtube)
+	http.HandleFunc("/youtube/search", Youtube)
 	http.HandleFunc("/youtube/stream", YoutubeStream)
 	http.HandleFunc("/youtube/download", YoutubeDL)
 	http.HandleFunc("/imdb", ImDB)

@@ -422,6 +422,25 @@ var Endpoints = []Endpoint{
 			{Name: "Stream", Type: "JSON Result", Info: "Stream."},
 		},
 	},
+	{
+		Name:   "Youtube Download",
+		Path:   "/youtube/download",
+		Method: "GET",
+		Info:   "Download a video from Youtube.",
+		Usage:  `{}/youtube/download?url=https://www.youtube.com/watch?v=dQw4w9WgXcQ, {}/youtube/download?id=dQw4w9WgXcQ&video=true, {}/youtube/download?q=Vaaste`,
+		Params: []Parameter{
+			{Name: "url", Type: "string", Info: "The URL."},
+			{Name: "id", Type: "string", Info: "The video ID."},
+			{Name: "video", Type: "bool", Info: "Download video (Bool, optional)., By default, audio is downloaded."},
+			{Name: "q", Type: "string", Info: "The query."},
+			{Name: "i", Type: "bool", Info: "Indentaion (Bool, optional)."},
+			{Name: "query", Type: "string", Info: "The query."},
+			{Name: "download", Type: "bool", Info: "Selection between Download or Stream (Bool, optional)., By default, Streaming is selected."},
+		},
+		Returns: []Parameter{
+			{Name: "video/audio", Type: "Bytes", Info: "Video/Audio."},
+		},
+	},
 }
 
 func GetEnpointByPath(path string) *Endpoint {

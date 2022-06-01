@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -496,11 +498,54 @@ func ImdbTitleInfo(w http.ResponseWriter, r *http.Request) {
 	WriteJson(w, r, T, query.Get("i"))
 }
 
+func YoutubeDL(w http.ResponseWriter, r *http.Request) {
+	if !blockWrongMethod(w, r, "GET") {
+		return
+	}
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		WriteHelp("/youtube/download", w)
+	}
+	id := query.Get("id")
+	var stream io.ReadCloser
+	var err error
+	var name string
+	video := strings.ToLower(query.Get("video"))
+	download := strings.ToLower(query.Get("download"))
+	var is_audio = true
+	if video == "true" {
+		is_audio = false
+	}
+	if id == "" {
+		url := query.Get("url")
+		if url == "" {
+			WriteError("missing param, 'id' or 'url'", w)
+			return
+		}
+		stream, err, name = YoutubeDLBytes(url, is_audio)
+	} else {
+		stream, err, name = YoutubeDLBytes("https://www.youtube.com/watch?v="+id, is_audio)
+	}
+	defer stream.Close()
+	if !ERR(err, w) {
+		return
+	}
+	b, _ := ioutil.ReadAll(stream)
+	if download == "true" {
+		w.Header().Set("Content-Disposition", "attachment; filename="+name)
+		w.Write(b)
+		return
+	}
+	http.ServeContent(w, r, name, time.Now(), bytes.NewReader(b))
+}
+
 func init() {
 	http.HandleFunc("/tpb", Tpb)
 	http.HandleFunc("/google", Google)
 	http.HandleFunc("/youtube", Youtube)
 	http.HandleFunc("/youtube/stream", YoutubeStream)
+	http.HandleFunc("/youtube/download", YoutubeDL)
 	http.HandleFunc("/imdb", ImDB)
 	http.HandleFunc("/imdb/title", ImdbTitleInfo)
 	http.HandleFunc("/chatbot", ChatBot)

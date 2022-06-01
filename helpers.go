@@ -19,6 +19,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/buger/jsonparser"
+	yt "github.com/kkdai/youtube/v2"
 )
 
 var (
@@ -353,4 +354,28 @@ func newfileUploadRequest(uri string, params map[string]string, paramName string
 		req.Header.Add(field, value)
 	}
 	return req // fix it not workn, debugg
+}
+
+func YoutubeDLBytes(url string, audio bool) (io.ReadCloser, error, string) {
+	youtube := yt.Client{}
+	video, err := youtube.GetVideo(url)
+	if err != nil {
+		return nil, err, ""
+	}
+	if audio {
+		stream, _, err := youtube.GetStream(video, video.Formats.FindByItag(251))
+		if err != nil {
+			return nil, err, ""
+		}
+		return stream, nil, video.Title + ".mp3"
+	}
+	v := video.Formats.FindByItag(22)
+	if v == nil {
+		v = video.Formats.FindByItag(18)
+	}
+	stream, _, err := youtube.GetStream(video, v)
+	if err != nil {
+		return nil, err, ""
+	}
+	return stream, nil, video.Title + ".mp4"
 }

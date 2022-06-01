@@ -28,6 +28,7 @@ func Tpb(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/tpb", w)
+		return
 	}
 	i := query.Get("i")
 	q := query.Get("q")
@@ -51,6 +52,7 @@ func Google(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/google", w)
+		return
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -100,6 +102,7 @@ func Youtube(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/youtube", w)
+		return
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -122,6 +125,7 @@ func ImDB(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/imdb", w)
+		return
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -168,6 +172,7 @@ func ChatBot(w http.ResponseWriter, r *http.Request) {
 	q := query.Get("message")
 	if query.Get("help") != "" {
 		WriteHelp("/chatbot", w)
+		return
 	}
 	if q == "" {
 		http.Error(w, "missing 'message'", http.StatusBadRequest)
@@ -191,6 +196,7 @@ func Math(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/math", w)
+		return
 	}
 	q := query.Get("q")
 	if q == "" {
@@ -226,6 +232,7 @@ func Spotify(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/spotify", w)
+		return
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -249,6 +256,7 @@ func LyricsA(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/lyrics", w)
+		return
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -273,6 +281,7 @@ func Stream(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/stream", w)
+		return
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -289,6 +298,7 @@ func YoutubeStream(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/youtube/stream", w)
+		return
 	}
 	id := query.Get("id")
 	i := query.Get("i")
@@ -326,6 +336,7 @@ func LinkPreview(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/urlpreview", w)
+		return
 	}
 	_url := query.Get("url")
 	i := query.Get("i")
@@ -352,6 +363,7 @@ func ScreenShot(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/screenshot", w)
+		return
 	}
 	_url := query.Get("url")
 	i := query.Get("i")
@@ -418,6 +430,7 @@ func FileInfo(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/fileinfo", w)
+		return
 	}
 	q := query.Get("q")
 	i := query.Get("i")
@@ -469,6 +482,7 @@ func ImdbTitleInfo(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/imdb/title", w)
+		return
 	}
 	id := query.Get("id")
 	if id == "" {
@@ -494,6 +508,7 @@ func YoutubeDL(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	if query.Get("help") != "" {
 		WriteHelp("/youtube/download", w)
+		return
 	}
 	id := query.Get("id")
 	q := query.Get("q")

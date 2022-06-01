@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"regexp"
 	"strings"
 	"text/template"
 	"time"
@@ -108,21 +107,10 @@ func Youtube(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "missing query", http.StatusBadRequest)
 		return
 	}
-	URL := "https://www.youtube.com/results?search_query=" + url.QueryEscape(q)
-	resp, err := c.Get(URL)
+	pData, err := YtSearch(q)
 	if !ERR(err, w) {
 		return
 	}
-	var exp, _ = regexp.Compile(`ytInitialData = [\s\S]*]`)
-	b, _ := ioutil.ReadAll(resp.Body)
-	match := exp.FindStringSubmatch(string(b))
-	var d string
-	if len(match) != 0 {
-		d = match[0]
-		d = strings.Replace(d, "ytInitialData = ", "", 1)
-		d = strings.Split(d, ";</script>")[0]
-	}
-	pData := ParseYoutubeRAW(d)
 	WriteJson(w, r, pData, i)
 }
 
@@ -508,6 +496,10 @@ func YoutubeDL(w http.ResponseWriter, r *http.Request) {
 		WriteHelp("/youtube/download", w)
 	}
 	id := query.Get("id")
+	q := query.Get("q")
+	if q == "" {
+		q = query.Get("query")
+	}
 	var stream io.ReadCloser
 	var err error
 	var name string
@@ -520,8 +512,23 @@ func YoutubeDL(w http.ResponseWriter, r *http.Request) {
 	if id == "" {
 		url := query.Get("url")
 		if url == "" {
-			WriteError("missing param, 'id' or 'url'", w)
-			return
+			if q != "" {
+				pData, err := YtSearch(q)
+				if !ERR(err, w) {
+					return
+				}
+				var data []map[string]string
+				json.Unmarshal(pData, &data)
+				if len(data) > 0 {
+					url = data[0]["url"]
+				} else {
+					WriteError("not found", w)
+					return
+				}
+			} else {
+				WriteError("missing param, 'id' or 'url' or 'q", w)
+				return
+			}
 		}
 		stream, err, name = YoutubeDLBytes(url, is_audio)
 	} else {

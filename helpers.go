@@ -109,6 +109,25 @@ func _UnescapeUnicodeCharactersInJSON(_jsonRaw json.RawMessage) json.RawMessage 
 	return []byte(str)
 }
 
+func YtSearch(q string) ([]byte, error) {
+	URL := "https://www.youtube.com/results?search_query=" + url.QueryEscape(q)
+	resp, err := c.Get(URL)
+	if err != nil {
+		return nil, err
+	}
+	var exp, _ = regexp.Compile(`ytInitialData = [\s\S]*]`)
+	b, _ := ioutil.ReadAll(resp.Body)
+	match := exp.FindStringSubmatch(string(b))
+	var d string
+	if len(match) != 0 {
+		d = match[0]
+		d = strings.Replace(d, "ytInitialData = ", "", 1)
+		d = strings.Split(d, ";</script>")[0]
+	}
+	pData := ParseYoutubeRAW(d)
+	return pData, nil
+}
+
 func ParseYoutubeRAW(raw string) []byte {
 	by := []byte(raw)
 	var Results []YoutubeResult

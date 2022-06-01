@@ -539,6 +539,7 @@ func YoutubeDL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	b, _ := ioutil.ReadAll(stream)
+	w.Header().Set("File-Name", name)
 	if download == "true" {
 		w.Header().Set("Content-Disposition", "attachment; filename="+name)
 		w.Write(b)

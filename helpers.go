@@ -46,6 +46,14 @@ func fetchPort() string {
 	return ":3000"
 }
 
+func GetIP(r *http.Request) string {
+	forwarded := r.Header.Get("X-FORWARDED-FOR")
+	if forwarded != "" {
+		return forwarded
+	}
+	return r.RemoteAddr
+}
+
 func ERR(err error, w http.ResponseWriter) bool {
 	if err != nil {
 		WriteError(err.Error(), w)

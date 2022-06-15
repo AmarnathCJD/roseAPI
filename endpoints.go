@@ -615,11 +615,12 @@ func IpInfo(w http.ResponseWriter, r *http.Request) {
 	}
 	ip := query.Get("ip")
 	if ip == "" {
-		ip = r.URL.Path[len("/ip/"):]
-	}
-	if ip == "" {
-		WriteError("missing param, 'ip'", w)
-		return
+		if r.RemoteAddr != "" {
+			ip = GetIP(r)
+		} else {
+			WriteError("missing param, 'ip'", w)
+			return
+		}
 	}
 	req, err := http.NewRequest("GET", "https://ipinfo.io/account/search?query="+ip, nil)
 	req.Header.Set("content-type", "application/json")

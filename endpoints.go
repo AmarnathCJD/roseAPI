@@ -603,6 +603,38 @@ func NetFlixSearch(w http.ResponseWriter, r *http.Request) {
 	WriteJson(w, r, resp.Body, query.Get("i"))
 }
 
+func IpInfo(w http.ResponseWriter, r *http.Request) {
+	if !blockWrongMethod(w, r, "GET") {
+		return
+	}
+	r.Header.Set("X-Start-Time", fmt.Sprint(time.Now().UnixNano()))
+	query := r.URL.Query()
+	if query.Get("help") != "" {
+		WriteHelp("/ip", w)
+		return
+	}
+	ip := query.Get("ip")
+	if ip == "" {
+		ip = r.URL.Path[len("/ip/"):]
+	}
+	if ip == "" {
+		WriteError("missing param, 'ip'", w)
+		return
+	}
+	req, err := http.NewRequest("GET", "https://ipinfo.io/account/search?query="+ip, nil)
+	req.Header.Set("content-type", "application/json")
+	req.Header.Set("cookie", "jwt-express=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo2NjU1NjAsImVtYWlsIjoiYW1hcm5hdGhjaGFyaWNoaWxpbEBnbWFpbC5jb20iLCJjcmVhdGVkIjoiMyBtb250aHMgYWdvKDIwMjItMDMtMTBUMDE6MzU6MzguMzU4WikiLCJzdHJpcGVfaWQiOm51bGwsImlhdCI6MTY1NTI2NTYxNH0.nLMZpMKJnkptMlG_Nsg3E8HD31XyEGWqmjFtLXhJV5w")
+	if !ERR(err, w) {
+		return
+	}
+	resp, err := Aclient.Do(req)
+	if !ERR(err, w) {
+		return
+	}
+	defer resp.Body.Close()
+	WriteJson(w, r, resp.Body, query.Get("i"))
+}
+
 func init() {
 	http.HandleFunc("/tpb", Tpb)
 	http.HandleFunc("/google", Google)
@@ -619,6 +651,7 @@ func init() {
 	http.HandleFunc("/stream", Stream)
 	http.HandleFunc("/urlpreview", LinkPreview)
 	http.HandleFunc("/screenshot", ScreenShot)
+	http.HandleFunc("/ip", IpInfo)
 	http.HandleFunc("/ocr", OCR)
 	http.HandleFunc("/fileinfo", FileInfo)
 	http.HandleFunc("/", HomePage)
